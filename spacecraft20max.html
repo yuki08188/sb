@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html lang=zh-CN>
+<head>
+<meta charset=UTF-8>
+<title>Astraeus v17.3 最终版（基于v6.0）</title>
+<style>
+/* ===== 全部 v6.0 原有 CSS ===== */
+body{margin:0;overflow:hidden;background:#000;font-family:'Segoe UI',monospace}
+#hud{position:absolute;top:20px;left:20px;color:#38bdf8;background:rgba(10,18,38,.94);padding:20px;border-radius:12px;font-size:13px;line-height:1.9;pointer-events:none;border:1px solid #0284c7;min-width:240px;z-index:20}
+#blueprint-panel{position:absolute;top:20px;right:20px;color:#f1f5f9;background:rgba(8,14,30,.97);padding:20px;border-radius:12px;width:400px;border:1px solid #0284c7;max-height:92vh;overflow-y:auto;z-index:20}
+.panel-title{font-size:13px;color:#38bdf8;font-weight:700;border-left:4px solid #0ea5e9;padding-left:10px;margin-bottom:14px}
+.sec{font-size:9.5px;color:#475569;text-transform:uppercase;margin:14px 0 7px;border-bottom:1px solid #1e293b;padding-bottom:4px;font-weight:700}
+.part-card{background:rgba(15,23,42,.9);border:1px solid #1e3a5f;border-radius:8px;padding:10px;margin-bottom:7px}
+.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.part-name{color:#7dd3fc;font-size:12px;font-weight:700}
+.coord-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:5px}
+.coord-wrap{display:flex;flex-direction:column}
+.coord-lbl{font-size:9px;color:#475569;text-transform:uppercase;margin-bottom:2px}
+.coord-in{background:#0a1628;border:1px solid #1e3a5f;color:#bae6fd;padding:4px 7px;border-radius:5px;font-size:12px;width:100%;box-sizing:border-box;font-family:monospace}
+.coord-in:focus{outline:none;border-color:#0ea5e9}
+.thr-row{display:flex;align-items:center;gap:8px;margin-top:5px}
+.thr-row label{font-size:11px;color:#64748b;white-space:nowrap}
+.thr-row input{flex:1;accent-color:#38bdf8}
+.thr-val{font-size:11px;color:#38bdf8;min-width:34px}
+.fuel-info{font-size:11px;color:#475569;margin-top:4px}
+.btn{background:#0c4a6e;color:#e0f2fe;border:1px solid #0ea5e9;padding:6px 12px;cursor:pointer;border-radius:6px;font-size:11px;font-weight:700;transition:all .15s;font-family:inherit;margin:2px}
+.btn:hover{background:#075985}
+.btn-sm{padding:3px 8px;font-size:10px}
+.btn-red{background:#450a0a;border-color:#dc2626;color:#fee2e2}
+.btn-green{background:#052e16;border-color:#16a34a;color:#dcfce7}
+.btn-gold{background:#451a03;border-color:#f59e0b;color:#fef3c7}
+.pad-btn{background:#0f172a;border:1px solid #1e3a5f;color:#64748b;padding:5px 10px;cursor:pointer;border-radius:5px;font-size:11px;margin:2px}
+.pad-btn.on{background:#0c4a6e;border-color:#0ea5e9;color:#bae6fd}
+.warp-row{display:flex;align-items:center;gap:8px;margin-top:6px}
+.warp-row label{font-size:11px;color:#64748b}
+.warp-row input{flex:1;accent-color:#38bdf8}
+#tips{position:absolute;bottom:20px;left:20px;color:#64748b;font-size:11px;pointer-events:none;background:rgba(8,14,30,.85);padding:10px 14px;border-radius:8px;border:1px solid #1e293b;line-height:1.8;z-index:20}
+.k{background:#0f172a;padding:1px 5px;border-radius:3px;color:#38bdf8;border:1px solid #1e3a5f}
+#alert-box{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(90,0,0,.95);color:#ff5555;font-size:26px;font-weight:900;padding:30px 50px;border-radius:16px;border:2px solid #dc2626;display:none;z-index:100}
+#meteor-warn{position:absolute;top:45%;left:50%;transform:translate(-50%,-50%);background:rgba(100,50,0,.92);color:#fbbf24;font-size:20px;font-weight:700;padding:14px 28px;border-radius:10px;border:2px solid #f59e0b;display:none;z-index:99}
+#accident-bar{position:absolute;top:50%;right:420px;transform:translateY(-50%);color:#ef4444;font-size:14px;font-weight:700;z-index:30}
+#block-panel{position:absolute;top:210px;left:20px;color:#f1f5f9;background:rgba(6,4,24,.97);padding:16px;border-radius:12px;width:340px;border:1px solid #7c3aed;max-height:54vh;overflow-y:auto;display:none;z-index:50}
+.bp-title{font-size:12px;color:#a78bfa;font-weight:700;border-left:4px solid #7c3aed;padding-left:10px;margin-bottom:12px}
+#gnc-warn{background:rgba(120,53,15,.9);color:#fbbf24;font-size:10px;padding:6px 10px;border-radius:5px;border:1px solid #d97706;margin-bottom:10px;display:none}
+.badd-row{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}
+.badd{background:#0f172a;border:1px solid #4338ca;color:#818cf8;padding:4px 8px;cursor:pointer;border-radius:4px;font-size:10px;font-family:inherit}
+.badd:hover{background:#1e1b4b;color:#c7d2fe}
+.block-item{display:flex;align-items:center;gap:5px;padding:7px 9px;border-radius:6px;margin-bottom:4px;font-size:11px;border:1px solid;flex-wrap:wrap}
+.b-throttle{background:#1c0707;border-color:#dc2626}.b-gimbal{background:#1c1007;border-color:#d97706}.b-wait{background:#0f071c;border-color:#7c3aed}.b-solar{background:#071c07;border-color:#16a34a}.b-if{background:#071c1c;border-color:#0891b2}.b-wheel{background:#1c1c07;border-color:#eab308}.b-wing{background:#071c1c;border-color:#06b6d4}.b-dec{background:#1c0707;border-color:#ef4444}.b-pitch{background:#1c071c;border-color:#d946ef}.b-rpt{background:#1c1c1c;border-color:#a78bfa}
+.block-children{margin-left:14px;border-left:2px solid #0891b230;padding-left:8px;margin-bottom:3px}
+.acc-btn{background:#0f172a;border:1px solid #1e3a5f;color:#64748b;padding:5px 9px;cursor:pointer;border-radius:5px;font-size:10px;margin:2px}
+.acc-btn.on{background:#0c4a6e;border-color:#0ea5e9;color:#bae6fd}
+#fpv-ch{display:none;position:absolute;top:50%;left:50%;width:20px;height:20px;transform:translate(-50%,-50%);pointer-events:none;z-index:5;border:1px solid #38bdf850;border-radius:50%}
+#evade-text{position:absolute;bottom:50px;left:50%;transform:translateX(-50%);color:#ef4444;font-size:16px;display:none;background:rgba(0,0,0,.7);padding:6px 16px;border-radius:8px;border:1px solid #dc2626;z-index:40}
+#state-badge{position:absolute;top:60px;left:50%;transform:translateX(-50%);padding:2px 10px;border-radius:5px;font-size:10px;font-weight:700;pointer-events:none;z-index:10}
+.state-design{color:#38bdf8;background:rgba(8,14,30,.8);border:1px solid #0ea5e9}.state-flight{color:#ef4444;background:rgba(30,8,8,.8);border:1px solid #dc2626}
+.acc-list-item{display:flex;justify-content:space-between;align-items:center;background:rgba(15,23,42,.8);padding:3px 8px;border-radius:5px;margin-bottom:2px;font-size:10px}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+<!-- ===== v6.0 HUD (不改动) ===== -->
+<div id="hud">
+ <div style="font-weight:700;font-size:15px;color:#fff;margin-bottom:8px"> ASTRAEUS v17.3</div>
+ <div style="border-top:1px solid #0284c730;margin-bottom:8px"></div>
+ 高度: <span id="u-alt">0.000</span> km<br>
+ 速度: <span id="u-spd">0.0</span> m/s<br>
+ 轨道速度: <span id="u-orb">7909</span> m/s<br>
+ 引力: <span id="u-g">9.810</span> m/s<br>
+ 动压: <span id="u-q">0.00</span> kPa<br>
+ <div style="border-top:1px solid #0284c730;margin:6px 0"></div>
+ 质量: <span id="u-mass">0</span> kg<br>
+ 燃料: <span id="u-fuel">0</span> / <span id="u-fmax">0</span> kg<br>
+ 推力: <span id="u-thr">0.0</span> kN<br>
+ <div style="border-top:1px solid #0284c730;margin:6px 0"></div>
+ 电量: <span id="u-bat" style="color:#64748b">--</span><br>
+ <div id="energy-bar" style="height:5px;background:#0f172a;border-radius:3px;overflow:hidden;margin:1px 0"><div id="energy-fill" style="height:100%;background:linear-gradient(90deg,#0ea5e9,#06b6d4);border-radius:3px;width:0%"></div></div>
+ 雷达: <span id="u-radar" style="color:#64748b">--</span><br>
+ <div style="border-top:1px solid #0284c730;margin:6px 0"></div>
+ 状态: <span id="u-status" style="color:#22c55e">就绪</span><br>
+ <span id="u-dmg" style="color:#ef4444;font-size:12px"></span>
+ <!-- 新增：任务面板和AI面板 -->
+ <div id="ai-box" style="display:none;margin-top:6px;border:1px solid #7c3aed;border-radius:6px;padding:6px;font-size:11px"><div style="color:#a78bfa">AI导航</div><div id="ai-reason" style="color:#818cf8"></div></div>
+ <div id="mission-box" style="display:none;margin-top:6px;border:1px solid #fbbf24;border-radius:6px;padding:6px;font-size:11px"><div style="font-weight:700;color:#fbbf24">任务</div><div id="mission-list"></div></div>
+</div>
+<!-- ===== /v6.0 HUD ===== -->
+
+<!-- GNC徽章 + 状态（新增） -->
+<div id="gnc-badge" style="position:absolute;top:20px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.8);padding:5px 14px;border-radius:8px;font-size:13px;font-weight:700;pointer-events:none;z-index:10">GNC L0 纯手动</div>
+<div id="state-badge" class="state-design">设计模式</div>
+<div id="fpv-ch"></div>
+<div id="evade-text">自动避障中...</div>
+
+<!-- ===== v6.0 编程面板（不改） ===== -->
+<div id="block-panel">
+ <div class="bp-title"> 指令块控制台</div>
+ <div id="gnc-warn"> 需要 GNC 计算机</div>
+ <div class="badd-row">
+ <button class="badd" onclick="interpreter.addBlock('setEngineThrottle')">节流</button>
+ <button class="badd" onclick="interpreter.addBlock('setGimbalRate')">偏航</button>
+ <button class="badd" onclick="interpreter.addBlock('setPitch')">俯仰</button>
+ <button class="badd" onclick="interpreter.addBlock('wait')">等待</button>
+ <button class="badd" onclick="interpreter.addBlock('deploySolarPanels')">太阳板</button>
+ <button class="badd" onclick="interpreter.addBlock('setWheels')">轮子</button>
+ <button class="badd" onclick="interpreter.addBlock('setWings')">机翼</button>
+ <button class="badd" onclick="interpreter.addBlock('activateDecoupler')">脱离</button>
+ <button class="badd" onclick="interpreter.addBlock('ifAltitude')">高度判断</button>
+ <button class="badd" onclick="interpreter.addBlock('ifSpeed')">速度判断</button>
+ <button class="badd" onclick="interpreter.addBlock('repeat')">重复N次</button>
+ <button class="badd" onclick="interpreter.addBlock('repeatUntil')">重复直到</button>
+ </div>
+ <div id="block-list"></div>
+ <div class="bp-controls">
+ <button id="bp-run" class="btn" style="background:#052e16;border-color:#16a34a;color:#dcfce7" onclick="interpreter.start()">运行</button>
+ <button id="bp-stop" class="btn" style="background:#450a0a;border-color:#dc2626;color:#fee2e2" onclick="interpreter.stop()">停止</button>
+ <button id="bp-loop" class="btn" onclick="interpreter.toggleLoop()">循环</button>
+ <button class="btn btn-red" onclick="interpreter.clearProgram()">清空</button>
+ </div>
+</div>
+<!-- ===== /v6.0 编程面板 ===== -->
+
+<div id="alert-box"> 火箭损毁 <br><span style="font-size:15px;color:#fca5a5">按 R 重置</span></div>
+<div id="meteor-warn"> 陨石来袭!</div>
+<div id="accident-bar"></div>
+
+<div id="tips">
+ W加速 S减速 | AD偏航 俯仰 |
+ T编程 V第一人称 H模式切换 M任务 P自动 F修复 R重置
+</div>
+
+<!-- ===== v6.0 蓝图面板（扩展） ===== -->
+<div id="blueprint-panel">
+ <div class="panel-title">蓝图控制台 v17.3</div>
+
+ <div class="sec">发射架</div>
+ <div>
+ <button class="pad-btn on" onclick="setPad('tower')">塔</button>
+ <button class="pad-btn" onclick="setPad('platform')">台</button>
+ <button class="pad-btn" onclick="setPad('minimal')">简</button>
+ <button class="pad-btn" onclick="setPad('silo')">井</button>
+ </div>
+
+ <div class="sec">部件 + 旋转</div>
+ <div id="parts-list"></div>
+ <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:2px">
+ <button class="btn btn-green" onclick="addPart('tank')">燃料箱</button>
+ <button class="btn btn-green" onclick="addPart('engine')">推进器</button>
+ <button class="btn btn-gold" onclick="addPart('wheel')">轮子</button>
+ <button class="btn" onclick="addPart('elec')">电引擎</button>
+ <button class="btn btn-red" onclick="addPart('deco')">脱离架</button>
+ <button class="btn" onclick="addPart('wing')">机翼</button>
+ <button class="btn btn-red" onclick="resetAll()">重置</button>
+ </div>
+
+ <div class="sec">配件（可重复）</div>
+ <div id="acc-list"></div>
+ <button class="acc-btn" onclick="addAccessory('solar')">+太阳板</button>
+ <button class="acc-btn" onclick="addAccessory('battery')">+电池</button>
+ <button class="acc-btn" onclick="addAccessory('radar')">+雷达</button>
+ <button class="acc-btn" onclick="addAccessory('gnc')">+GNC</button>
+
+ <div class="sec">GNC 等级</div>
+ <select id="gnc-lev" style="width:100%;background:#0a1628;border:1px solid #6366f1;color:#bae6fd;padding:4px;border-radius:5px;font-size:12px" onchange="setGNCLevel(+this.value)">
+  <option value="0">L0 纯手动</option>
+  <option value="1">L1 导航</option>
+  <option value="2">L2 积木控制</option>
+  <option value="3">L3 自动</option>
+  <option value="4">L4 AI-GNC</option>
+ </select>
+
+ <div class="sec">自动化 / 视角</div>
+ <button id="auto-btn" class="btn" onclick="toggleAuto()" style="opacity:.4">自动飞行</button><span id="auto-st" style="color:#64748b;font-size:11px">需 L3</span>
+ <button id="fpv-btn" class="btn btn-gold" onclick="toggleFPV()" style="opacity:.6">FPV</button><span id="cam-st" style="color:#fbbf24;font-size:11px">轨道</span>
+
+ <div class="sec">仿真参数</div>
+ <div class="warp-row">
+ <label>时间加速:</label>
+ <input type="range" min="0.1" max="10" step="0.1" value="2" oninput="timeSpeed=+this.value;document.getElementById('u-warp').innerText=this.value+'x'">
+ <span id="u-warp" style="color:#38bdf8">2x</span>
+ </div>
+</div>
+
+<script>
+// ==================== v6.0 原始代码（完整保留） ====================
+
+// ─── CONSTANTS ───
+const PHY = { G:6.6743e-11, M:5.972e24, R:6371000 };
+const EARTH_VR = 300; // 需求2：地球扩大
+const VSCALE = EARTH_VR / PHY.R;
+let timeSpeed = 2; // 需求5：默认2x
+
+// 月球常量（需求13）
+const MOON_R=1737000,MOON_ORBIT=384400000,MOON_MASS=7.347e22;
+
+// ─── ACCESSORY CLASSES (v6.0 原有) ───
+let _pid = 1;
+
+class SolarPanel {
+ constructor(){
+ this.id=_pid++; this.type='solar';
+ this.mass=80; this.maxPower=500;
+ this.deployed=false; this.deployAngle=0;
+ this.lx=1.8; this.ly=0.5; this.lz=0;
+ this.connected=true;
+ this._pivot=null;
+ }
+ getMass(){ return this.connected ? this.mass : 0; }
+ getPower(sunDir, shipQuat){
+ if(!this.deployed||!this.connected||this.deployAngle<0.05) return 0;
+ const normal=new THREE.Vector3(0,0,1).applyQuaternion(shipQuat);
+ return this.maxPower * Math.max(0, normal.dot(sunDir)) * this.deployAngle;
+ }
+}
+
+class BatteryBank {
+ constructor(){
+ this.id=_pid++; this.type='battery';
+ this.mass=150; this.maxStorage=5000; this.currentStorage=500;
+ this.lx=0; this.ly=-1.0; this.lz=0;
+ this.connected=true;
+ }
+ getMass(){ return this.connected ? this.mass : 0; }
+ charge(watts, dt){ this.currentStorage=Math.min(this.maxStorage, this.currentStorage+watts*dt/3600); }
+ draw(watts, dt){ const e=watts*dt/3600; if(this.currentStorage>=e){this.currentStorage-=e;return true;} return false; }
+}
+
+class GNCComputer {
+ constructor(){
+ this.id=_pid++; this.type='gnc';
+ this.mass=45; this.powerDraw=50;
+ this.lx=0; this.ly=0.8; this.lz=0;
+ this.connected=true;
+ }
+ getMass(){ return this.connected ? this.mass : 0; }
+}
+
+class MeteorRadar {
+ constructor(){
+ this.id=_pid++; this.type='radar';
+ this.mass=30; this.powerDraw=80;
+ this.range=500000;
+ this.lx=0; this.ly=1.6; this.lz=0;
+ this.connected=true;
+ this.status='standby';
+ this._grp=null; this._scanAngle=0;
+ }
+ getMass(){ return this.connected ? this.mass : 0; }
+}
+
+// ─── 新增部件类（需求7/9/10/15） ───
+class WheelPart {
+ constructor(){
+ this.id=_pid++; this.type='wheel';
+ this.mass=50; this.deployed=false;
+ this.lx=0; this.ly=-0.5; this.lz=0.6;
+ this.rx=0; this.ry=0; this.rz=0; this._vis=null;
+ }
+ getMass(){ return this.mass; }
+}
+class ElecPart {
+ constructor(){
+ this.id=_pid++; this.type='elec';
+ this.dryMass=400; this.maxThrust=150000; this.powerDraw=2000;
+ this.throttle=0; this.failed=false;
+ this.lx=0; this.ly=-0.4; this.lz=0;
+ this.rx=0; this.ry=0; this.rz=0; this._fg=null;
+ }
+ getMass(){ return this.dryMass; }
+ getThrust(){ return this.failed?0:this.maxThrust*this.throttle; }
+}
+class DecouplerPart {
+ constructor(){
+ this.id=_pid++; this.type='deco';
+ this.mass=20; this.activated=false;
+ this.lx=0; this.ly=0; this.lz=0;
+ this.rx=0; this.ry=0; this.rz=0;
+ }
+ getMass(){ return this.mass; }
+}
+class WingPart {
+ constructor(){
+ this.id=_pid++; this.type='wing';
+ this.mass=100; this.extended=true;
+ this.lx=0; this.ly=0.5; this.lz=0;
+ this.rx=0; this.ry=0; this.rz=0; this._vis=null;
+ }
+ getMass(){ return this.mass; }
+}
+
+// ─── PHYSICS CLASSES (v6.0 原有) ───
+class FuelTank {
+ constructor(){
+ this.id=_pid++; this.type='tank';
+ this.dryMass=1200; this.maxFuel=15000; this.currentFuel=15000;
+ this.lx=0; this.ly=1.0; this.lz=0;
+ this.rx=0; this.ry=0; this.rz=0;
+ }
+ getMass(){ return this.dryMass+this.currentFuel; }
+}
+
+class Engine {
+ constructor(){
+ this.id=_pid++; this.type='engine';
+ this.dryMass=600; this.maxThrust=550000; this.Isp=300; this.burnRate=45;
+ this.throttle=0; this.failed=false;
+ this.lx=0; this.ly=-0.4; this.lz=0; this._fg=null;
+ this.rx=0; this.ry=0; this.rz=0;
+ }
+ getMass(){ return this.dryMass; }
+ getThrust(){ return this.failed?0:this.maxThrust*this.throttle; }
+ getBurnRate(){ return this.failed?0:this.burnRate*this.throttle; }
+}
+
+class Ship {
+ constructor(){
+ this.parts=[];
+ this.accessories=[];
+ this.pos=new THREE.Vector3(0,PHY.R+5,0);
+ this.vel=new THREE.Vector3();
+ this.quat=new THREE.Quaternion();
+ this.alive=true; this.destroyed=false; this.damage=0;
+ // 新增：GNC等级、任务
+ this.gncLevel=0; this.autoPilot=false; this.missionCompleted=[];
+ }
+ getMass(){
+ const base=2500;
+ const parts=this.parts.reduce((s,p)=>s+p.getMass(),0);
+ const accs=this.accessories.filter(a=>a.connected).reduce((s,a)=>s+a.getMass(),0);
+ return base+parts+accs;
+ }
+ getTanks(){ return this.parts.filter(p=>p.type==='tank'); }
+ getEngines(){ return this.parts.filter(p=>p.type==='engine'); }
+ getElecs(){ return this.parts.filter(p=>p.type==='elec'); }
+ getWheels(){ return this.parts.filter(p=>p.type==='wheel'); }
+ getDecos(){ return this.parts.filter(p=>p.type==='deco'); }
+ getWings(){ return this.parts.filter(p=>p.type==='wing'); }
+ getFuel(){ let cur=0,max=0; this.getTanks().forEach(t=>{cur+=t.currentFuel;max+=t.maxFuel;}); return{cur,max}; }
+ getTotalThrust(){ return this.getEngines().reduce((s,e)=>s+e.getThrust(),0)+this.getElecs().reduce((s,e)=>s+e.getThrust(),0); }
+ burnFuel(amt){
+ const tanks=this.getTanks().filter(t=>t.currentFuel>0);
+ if(!tanks.length) return;
+ tanks.forEach(t=>t.currentFuel=Math.max(0,t.currentFuel-amt/tanks.length));
+ }
+ getAlt(){ return this.pos.length()-PHY.R; }
+ getUp(){ return this.pos.clone().normalize(); }
+ hasGNC(){ return this.accessories.some(a=>a.type==='gnc'&&a.connected); }
+ hasBattery(){ return this.accessories.some(a=>a.type==='battery'&&a.connected); }
+ hasRadar(){ return this.accessories.some(a=>a.type==='radar'&&a.connected); }
+ getBattery(){ return this.accessories.find(a=>a.type==='battery'&&a.connected)||null; }
+ getSolarPanels(){ return this.accessories.filter(a=>a.type==='solar'&&a.connected); }
+ getGNCModule(){ return this.accessories.find(a=>a.type==='gnc'&&a.connected)||null; }
+}
+
+const ship = new Ship();
+
+// ─── GNC等级系统（新增：需求20） ───
+let gameState='design'; // 'design' | 'flight'
+function setGNCLabel(){
+ let b=document.getElementById('gnc-badge');
+ let g=ship.getGNCModule();
+ if(g&&g.failed){b.innerText='GNC 故障'}else if(ship.gncLevel==4){b.innerText='GNC L4 AI';b.style.borderColor='#7c3aed'}
+ else if(ship.gncLevel==0){b.innerText='GNC L0 纯手动'}else{b.innerText='GNC L'+ship.gncLevel+(['',' 导航',' 积木',' 自动'][ship.gncLevel]||'');b.style.borderColor='#0ea5e9'}
+}
+function setGNCLevel(l){
+ if(gameState=='flight'){showAccident('飞行中不能改GNC!');return}
+ ship.accessories=ship.accessories.filter(a=>a.type!=='gnc');
+ if(l>0&&l<4)ship.accessories.push(new GNCComputer());
+ ship.gncLevel=l;
+ setGNCLabel();
+ document.getElementById('auto-btn').style.opacity=l>=3?'1':'.4';
+ document.getElementById('auto-st').innerText=l>=3?'就绪':'需 L3';
+ syncVisual();updateAccessoryUI();
+ if(l>=4){
+  aiActive=1;document.getElementById('ai-box').style.display='block';
+  playTone(440,0.08,'sine',0.1);setTimeout(()=>playTone(660,0.08,'sine',0.1),100);
+ }else{aiActive=0;document.getElementById('ai-box').style.display='none'}
+}
+function toggleState(){gameState=gameState=='design'?'flight':'design';document.getElementById('state-badge').innerText=gameState=='design'?'设计':'飞行';document.getElementById('state-badge').className=gameState=='design'?'state-design':'state-flight';document.getElementById('gnc-lev').disabled=gameState=='flight'}
+
+// ─── 任务系统（新增：需求17） ───
+const MISSIONS=[
+ {name:'初飞',check:s=>s.getAlt()>=10000},
+ {name:'突破卡门线',check:s=>s.getAlt()>=100000},
+ {name:'轨道入轨',check:s=>s.getAlt()>=200000&&s.vel.length()>=7500},
+ {name:'深空探索',check:s=>s.getAlt()>=1000000},
+ {name:'完美飞行',check:s=>s.missionCompleted.length>=4&&s.alive}
+];
+function checkMissions(){
+ if(!ship.alive)return;
+ MISSIONS.forEach((m,i)=>{
+  if(ship.missionCompleted.includes(i))return;
+  if(m.check(ship)){ship.missionCompleted.push(i);showAccident(m.name+'!');spawnExplosion(ship.pos.clone().multiplyScalar(VSCALE),2);playTone(523,0.15,'sine',0.12);setTimeout(()=>playTone(659,0.15,'sine',0.12),150);setTimeout(()=>playTone(784,0.3,'sine',0.15),300)}
+ });
+}
+
+// ─── BLOCK INTERPRETER (v6.0 扩展版 需求8/19) ───
+class BlockInterpreter {
+ constructor(){
+ this.program=[];
+ this.running=false;
+ this.looping=false;
+ this.stack=[];
+ this.waitTimer=0;
+ this.gimbalRate=0;
+ this.panelVisible=false;
+ }
+
+ togglePanel(){
+ if(ship.gncLevel<2&&!this.panelVisible){showAccident('需要GNC L2!');return}
+ this.panelVisible=!this.panelVisible;
+ document.getElementById('block-panel').style.display=this.panelVisible?'block':'none';
+ this.renderUI();
+ }
+
+ start(){
+ if(ship.gncLevel<2){showAccident('需要GNC L2!');return}
+ if(!this.program.length) return;
+ this.stack=[{blocks:this.program,idx:0}];
+ this.running=true; this.waitTimer=0; this.gimbalRate=0;
+ this.renderUI();
+ }
+
+ stop(){
+ this.running=false; this.stack=[]; this.gimbalRate=0;
+ this.renderUI();
+ }
+
+ toggleLoop(){
+ this.looping=!this.looping;
+ document.getElementById('bp-loop').classList.toggle('active',this.looping);
+ }
+
+ clearProgram(){
+ this.stop(); this.program=[];
+ this.renderUI();
+ }
+
+ tick(dt){
+ if(!this.running||!ship.alive) return;
+ if(this.gimbalRate!==0){
+ const localUp=ship.getUp();
+ const q=new THREE.Quaternion().setFromAxisAngle(localUp,this.gimbalRate*dt);
+ ship.quat.premultiply(q).normalize();
+ }
+ if(this.waitTimer>0){ this.waitTimer-=dt; return; }
+ this._step();
+ }
+
+ _step(){
+ while(this.stack.length>0){
+ const frame=this.stack[this.stack.length-1];
+ if(frame.idx>=frame.blocks.length){ this.stack.pop(); continue; }
+ const block=frame.blocks[frame.idx++];
+ this._exec(block);
+ return;
+ }
+ if(this.looping&&this.program.length>0){
+ this.stack=[{blocks:this.program,idx:0}];
+ } else {
+ this.running=false;
+ this.renderUI();
+ }
+ }
+
+ _exec(block){
+ switch(block.type){
+ case 'setEngineThrottle':
+ ship.getEngines().forEach(e=>{ if(!e.failed) e.throttle=Math.max(0,Math.min(1,block.power)); });
+ break;
+ case 'setGimbalRate':
+ this.gimbalRate=block.rate;
+ break;
+ case 'setPitch':
+  {const a=THREE.MathUtils.degToRad(block.angle||10);const r=new THREE.Vector3(1,0,0).applyQuaternion(ship.quat);ship.quat.premultiply(new THREE.Quaternion().setFromAxisAngle(r,a)).normalize();break}
+ case 'wait':
+ this.waitTimer=block.seconds;
+ break;
+ case 'deploySolarPanels':
+ ship.getSolarPanels().forEach(p=>{ p.deployed=true; });
+ break;
+ case 'setWheels':
+ ship.getWheels().forEach(w=>{w.deployed=!!block.deploy});break;
+ case 'setWings':
+ ship.getWings().forEach(w=>{w.extended=!!block.extend});break;
+ case 'activateDecoupler':
+  {let d=ship.getDecos().find(dd=>!dd.activated);if(d)activateDecoupler(d);break}
+ case 'repeat':
+  // 重复N次：在stack中插入复制块
+  {let cnt=block.count||3;let blk=block.children||[];if(blk.length)for(let i=0;i<cnt;i++)this.stack.push({blocks:blk.slice(),idx:0});break}
+ case 'repeatUntil':
+  // 重复直到条件满足
+  {let cond=block.op==='>'?ship.getAlt()>block.val:ship.getAlt()<block.val;if(!cond&&block.children&&block.children.length)this.stack.push({blocks:block.children,idx:0}.blocks=block.children.slice());break}
+ case 'ifAltitude':{
+ const alt=ship.getAlt();
+ const ok=block.op==='>'?alt>block.val:alt<block.val;
+ if(ok&&block.children&&block.children.length)
+ this.stack.push({blocks:block.children,idx:0});
+ break;
+ }
+ case 'ifSpeed':{
+ const spd=ship.vel.length();
+ const ok=block.op==='>'?spd>block.val:spd<block.val;
+ if(ok&&block.children&&block.children.length)
+ this.stack.push({blocks:block.children,idx:0});
+ break;
+ }
+ }
+ }
+
+ addBlock(type, parentId=null){
+ const block=this._newBlock(type);
+ if(parentId!==null){
+ const parent=this._find(this.program,parentId);
+ if(parent&&Array.isArray(parent.children)) parent.children.push(block);
+ } else {
+ this.program.push(block);
+ }
+ this.renderUI();
+ }
+
+ _newBlock(type){
+ const id=Math.random().toString(36).slice(2,8);
+ const map={
+ setEngineThrottle:{id,type,power:0.8},
+ setGimbalRate:{id,type,rate:0.3},
+ setPitch:{id,type,angle:10},
+ wait:{id,type,seconds:2},
+ deploySolarPanels:{id,type},
+ setWheels:{id,type,deploy:1},
+ setWings:{id,type,extend:1},
+ activateDecoupler:{id,type},
+ repeat:{id,type,count:3,children:[]},
+ repeatUntil:{id,type,op:'>',val:50000,children:[]},
+ ifAltitude:{id,type,op:'>',val:50000,children:[]},
+ ifSpeed:{id,type,op:'>',val:500,children:[]},
+ };
+ return map[type]||{id,type};
+ }
+
+ _find(blocks,id){
+ for(const b of blocks){
+ if(b.id===id) return b;
+ if(b.children){ const f=this._find(b.children,id); if(f) return f; }
+ }
+ return null;
+ }
+
+ removeBlock(id){
+ this._remove(this.program,id);
+ this.renderUI();
+ }
+
+ _remove(blocks,id){
+ const i=blocks.findIndex(b=>b.id===id);
+ if(i>=0){ blocks.splice(i,1); return true; }
+ for(const b of blocks) if(b.children&&this._remove(b.children,id)) return true;
+ return false;
+ }
+
+ setParam(id,key,val){
+ const b=this._find(this.program,id);
+ if(b) b[key]=val;
+ }
+
+ renderUI(){
+ const list=document.getElementById('block-list'); if(!list) return;
+ list.innerHTML='';
+ this._renderBlocks(this.program,list,0);
+ const gw=document.getElementById('gnc-warn');
+ if(gw) gw.style.display=ship.gncLevel>=2?'none':'block';
+ const rb=document.getElementById('bp-run');
+ if(rb) rb.style.opacity=this.running?'0.5':'1';
+ }
+
+ _renderBlocks(blocks,container,depth){
+ blocks.forEach(b=>{
+ const wrap=document.createElement('div');
+ wrap.style.marginLeft=(depth*14)+'px';
+ wrap.innerHTML=this._blockHTML(b);
+ container.appendChild(wrap);
+ if(Array.isArray(b.children)){
+ const cc=document.createElement('div');
+ cc.className='block-children';
+ cc.style.marginLeft=(depth*14+8)+'px';
+ this._renderBlocks(b.children,cc,0);
+ const ab=document.createElement('button');
+ ab.className='badd';
+ ab.style.marginLeft=(depth*14+8)+'px';
+ ab.style.marginBottom='4px';
+ ab.textContent='+ 子块';
+ ab.onclick=()=>this._childMenu(b.id);
+ container.appendChild(cc);
+ container.appendChild(ab);
+ }
+ });
+ }
+
+ _blockHTML(b){
+ const cls={setEngineThrottle:'b-throttle',setGimbalRate:'b-gimbal',setPitch:'b-pitch',wait:'b-wait',deploySolarPanels:'b-solar',setWheels:'b-wheel',setWings:'b-wing',activateDecoupler:'b-dec',repeat:'b-rpt',repeatUntil:'b-rpt',ifAltitude:'b-if',ifSpeed:'b-if'}[b.type]||'b-wait';
+ let inner='';
+ const esc=id=>id.replace(/'/g,"\\'");
+ switch(b.type){
+ case 'setEngineThrottle':
+ inner=`<span style=color:#f87171>节流</span> <input class="coord-in" type="number" min="0" max="1" step="0.05" value="${b.power}" onchange="interpreter.setParam('${esc(b.id)}','power',+this.value)">`;
+ break;
+ case 'setGimbalRate':
+ inner=`<span style=color:#fbbf24>偏航</span> <input class="coord-in" type="number" min="-3" max="3" step="0.1" value="${b.rate}" onchange="interpreter.setParam('${esc(b.id)}','rate',+this.value)">`;
+ break;
+ case 'setPitch':
+ inner=`<span style=color:#d946ef>俯仰</span> <input class="coord-in" type="number" min="-90" max="90" step="5" value="${b.angle}" onchange="interpreter.setParam('${esc(b.id)}','angle',+this.value)">度`;
+ break;
+ case 'wait':
+ inner=`<span style=color:#a78bfa>等待</span> <input class="coord-in" type="number" min="0.1" max="60" step="0.5" value="${b.seconds}" onchange="interpreter.setParam('${esc(b.id)}','seconds',+this.value)">秒`;
+ break;
+ case 'deploySolarPanels':
+ inner=`<span style=color:#4ade80>展开太阳能板</span>`;
+ break;
+ case 'setWheels':
+ inner=`<span style=color:#eab308>轮子</span> <select class="coord-in" style="width:auto" onchange="interpreter.setParam('${esc(b.id)}','deploy',+this.value)"><option value=1 ${b.deploy?'selected':''}>打开</option><option value=0 ${!b.deploy?'selected':''}>收起</option></select>`;
+ break;
+ case 'setWings':
+ inner=`<span style=color:#22d3ee>机翼</span> <select class="coord-in" style="width:auto" onchange="interpreter.setParam('${esc(b.id)}','extend',+this.value)"><option value=1 ${b.extend?'selected':''}>打开</option><option value=0 ${!b.extend?'selected':''}>收起</option></select>`;
+ break;
+ case 'activateDecoupler':
+ inner=`<span style=color:#ef4444>激活脱离架</span>`;
+ break;
+ case 'repeat':
+ inner=`<span style=color:#a78bfa>重复</span> <input class="coord-in" type="number" min="1" max="99" step="1" value="${b.count}" onchange="interpreter.setParam('${esc(b.id)}','count',+this.value)">次`;
+ break;
+ case 'repeatUntil':
+ inner=`<span style=color:#a78bfa>直到高度</span> <select class="coord-in" style="width:auto" onchange="interpreter.setParam('${esc(b.id)}','op',this.value)"><option ${b.op==='>'?'selected':''}>></option><option ${b.op==='<'?'selected':''}><</option></select> <input class="coord-in" type="number" value="${b.val}" onchange="interpreter.setParam('${esc(b.id)}','val',+this.value)">m`;
+ break;
+ case 'ifAltitude':
+ inner=`<span style=color:#22d3ee>高度</span> <select class="coord-in" style="width:auto" onchange="interpreter.setParam('${esc(b.id)}','op',this.value)"><option ${b.op==='>'?'selected':''}>></option><option ${b.op==='<'?'selected':''}><</option></select> <input class="coord-in" type="number" value="${b.val}" onchange="interpreter.setParam('${esc(b.id)}','val',+this.value)">m {`;
+ break;
+ case 'ifSpeed':
+ inner=`<span style=color:#22d3ee>速度</span> <select class="coord-in" style="width:auto" onchange="interpreter.setParam('${esc(b.id)}','op',this.value)"><option ${b.op==='>'?'selected':''}>></option><option ${b.op==='<'?'selected':''}><</option></select> <input class="coord-in" type="number" value="${b.val}" onchange="interpreter.setParam('${esc(b.id)}','val',+this.value)">m/s {`;
+ break;
+ }
+ return `<div class="block-item ${cls}" style="position:relative"><span style="flex:1">${inner}</span><button class="btn btn-sm btn-red" onclick="interpreter.removeBlock('${esc(b.id)}')">X</button></div>`;
+ }
+
+ _childMenu(parentId){
+ const types=['setEngineThrottle','setGimbalRate','setPitch','wait','deploySolarPanels','setWheels','setWings','activateDecoupler'];
+ const labels=['节流','偏航','俯仰','等待','太阳板','轮子','机翼','脱离'];
+ const choice=parseInt(window.prompt('添加子块:\n'+labels.map((l,i)=>`${i+1}.${l}`).join('\n')))-1;
+ if(choice>=0&&choice<types.length) this.addBlock(types[choice],parentId);
+ }
+}
+
+const interpreter = new BlockInterpreter();
+
+// ─── RENDERER (v6.0 原有) ───
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(55, innerWidth/innerHeight, 0.01, 60000);
+camera.position.set(0, EARTH_VR+12, 22);
+
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.2;
+document.body.appendChild(renderer.domElement);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping=true; controls.dampingFactor=0.06;
+controls.minDistance=2; controls.maxDistance=800;
+controls.maxPolarAngle=Math.PI*0.85; // 需求4：不能穿地
+
+// ─── STARS (v6.0 原有) ───
+(function(){
+ const N=8000,pos=new Float32Array(N*3);
+ for(let i=0;i<N;i++){
+ const th=Math.random()*Math.PI*2,ph=Math.acos(2*Math.random()-1);
+ const r=10000+Math.random()*5000;
+ pos[i*3]=r*Math.sin(ph)*Math.cos(th);pos[i*3+1]=r*Math.sin(ph)*Math.sin(th);pos[i*3+2]=r*Math.cos(ph);
+ }
+ const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+ scene.add(new THREE.Points(geo,new THREE.PointsMaterial({color:0xffffff,size:1.5,sizeAttenuation:true,transparent:true,opacity:0.85})));
+})();
+
+// ─── EARTH (v6.0 原有) ───
+// (使用Canvas生成纹理函数，完全保留v6.0的makeEarthTex)
+function makeEarthTex(){
+ const cv=document.createElement('canvas');cv.width=1024;cv.height=512;
+ const ctx=cv.getContext('2d');
+ ctx.fillStyle='#1a4fa0';ctx.fillRect(0,0,1024,512);
+ const blobs=[
+ {cx:180,cy:200,rx:130,ry:90,c:'#2d7a3c'},{cx:160,cy:320,rx:90,ry:60,c:'#2d7a3c'},
+ {cx:490,cy:180,rx:80,ry:70,c:'#3a8a42'},{cx:540,cy:280,rx:70,ry:120,c:'#2d7a3c'},
+ {cx:670,cy:160,rx:120,ry:80,c:'#3a8a42'},{cx:730,cy:240,rx:80,ry:70,c:'#2d7a3c'},
+ {cx:760,cy:340,rx:55,ry:40,c:'#3a8a42'},{cx:850,cy:200,rx:60,ry:50,c:'#2d7a3c'},
+ ];
+ blobs.forEach(b=>{
+ for(let i=0;i<60;i++){
+ const a=Math.random()*Math.PI*2,r=0.4+Math.random()*0.6;
+ const px=b.cx+Math.cos(a)*b.rx*r,py=b.cy+Math.sin(a)*b.ry*r;
+ const gs=18+Math.random()*22;
+ const g=ctx.createRadialGradient(px,py,0,px,py,gs);
+ g.addColorStop(0,b.c);g.addColorStop(1,'rgba(0,0,0,0)');
+ ctx.fillStyle=g;ctx.fillRect(px-gs,py-gs,gs*2,gs*2);
+ }
+ });
+ [{cx:530,cy:220,rx:40,ry:30},{cx:200,cy:260,rx:30,ry:25}].forEach(b=>{
+ const g=ctx.createRadialGradient(b.cx,b.cy,0,b.cx,b.cy,b.rx);
+ g.addColorStop(0,'rgba(180,150,80,0.7)');g.addColorStop(1,'rgba(0,0,0,0)');
+ ctx.fillStyle=g;ctx.fillRect(b.cx-b.rx,b.cy-b.ry,b.rx*2,b.ry*2);
+ });
+ for(let i=0;i<40;i++){
+ const px=Math.random()*1024;
+ [[y=>y,35],[y=>480+y,30]].forEach(([yf,lim])=>{
+ const py=yf(Math.random()*lim);
+ const g=ctx.createRadialGradient(px,py,0,px,py,28);
+ g.addColorStop(0,'rgba(220,235,255,0.95)');g.addColorStop(1,'rgba(0,0,0,0)');
+ ctx.fillStyle=g;ctx.fillRect(px-28,py-28,56,56);
+ });
+ }
+ for(let i=0;i<80;i++){
+ const cx=Math.random()*1024,cy=80+Math.random()*350;
+ const g=ctx.createRadialGradient(cx,cy,0,cx,cy,30+Math.random()*20);
+ g.addColorStop(0,'rgba(255,255,255,0.2)');g.addColorStop(1,'rgba(0,0,0,0)');
+ ctx.fillStyle=g;ctx.fillRect(cx-50,cy-20,100,40);
+ }
+ const tex=new THREE.CanvasTexture(cv);
+ tex.anisotropy=renderer.capabilities.getMaxAnisotropy();
+ return tex;
+}
+
+const earthMesh=new THREE.Mesh(
+ new THREE.SphereGeometry(EARTH_VR,64,64),
+ new THREE.MeshStandardMaterial({map:makeEarthTex(),roughness:0.75,metalness:0.0})
+);
+earthMesh.receiveShadow=true;scene.add(earthMesh);
+
+const atmoMesh=new THREE.Mesh(
+ new THREE.SphereGeometry(EARTH_VR*1.03,32,32),
+ new THREE.ShaderMaterial({
+ vertexShader:`varying vec3 vNorm;varying vec3 vView;void main(){vNorm=normalize(normalMatrix*normal);vView=normalize(-(modelViewMatrix*vec4(position,1.0)).xyz);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
+ fragmentShader:`varying vec3 vNorm;varying vec3 vView;void main(){float rim=1.0-max(dot(vNorm,vView),0.0);rim=pow(rim,3.0);gl_FragColor=vec4(0.2,0.55,1.0,rim*0.65);}`,
+ transparent:true,depthWrite:false,side:THREE.FrontSide,blending:THREE.AdditiveBlending
+ })
+);
+scene.add(atmoMesh);
+
+const cloudMesh=new THREE.Mesh(
+ new THREE.SphereGeometry(EARTH_VR*1.005,48,48),
+ new THREE.MeshStandardMaterial({color:0xffffff,transparent:true,opacity:0.14,roughness:1,metalness:0})
+);
+scene.add(cloudMesh);
+
+// ─── 月球（需求13新增） ───
+const moonGroup=new THREE.Group();scene.add(moonGroup);
+const moonMesh=new THREE.Mesh(new THREE.SphereGeometry(MOON_R*VSCALE*3,24,24),new THREE.MeshStandardMaterial({color:0xcccccc,roughness:.9,metalness:.1}));moonGroup.add(moonMesh);
+let moonAngle=0;
+
+// ─── SUN (v6.0 原有) ───
+const SUN_DIR=new THREE.Vector3(0.8,0.5,-0.3).normalize();
+const SUN_DIST=5000;
+const sunSphere=new THREE.Mesh(new THREE.SphereGeometry(80,16,16),new THREE.MeshBasicMaterial({color:0xfffff0}));
+sunSphere.position.copy(SUN_DIR).multiplyScalar(SUN_DIST);
+scene.add(sunSphere);
+[300,500,700].forEach((s,i)=>{
+ const sp=new THREE.Sprite(new THREE.SpriteMaterial({color:i===0?0xffeeaa:i===1?0xffddaa:0xff9944,transparent:true,opacity:0.18-i*0.04,blending:THREE.AdditiveBlending}));
+ sp.scale.set(s,s,1);sp.position.copy(sunSphere.position);scene.add(sp);
+});
+const sunLight=new THREE.DirectionalLight(0xfff8e8,3.5);
+sunLight.position.copy(SUN_DIR).multiplyScalar(1000);
+sunLight.castShadow=true;sunLight.shadow.mapSize.set(2048,2048);
+sunLight.shadow.camera.left=-200;sunLight.shadow.camera.right=200;
+sunLight.shadow.camera.top=200;sunLight.shadow.camera.bottom=-200;
+sunLight.shadow.camera.near=0.5;sunLight.shadow.camera.far=3000;
+scene.add(sunLight);
+scene.add(new THREE.AmbientLight(0x112244,0.35));
+
+// ─── MATERIALS (v6.0 原有 + 新增材质) ───
+const M={
+ pod: new THREE.MeshStandardMaterial({color:0xdae8f5,metalness:0.82,roughness:0.14}),
+ tank: new THREE.MeshStandardMaterial({color:0xf0f8ff,metalness:0.70,roughness:0.18}),
+ stripe:new THREE.MeshStandardMaterial({color:0x0369a1,metalness:0.5,roughness:0.25}),
+ eng: new THREE.MeshStandardMaterial({color:0x0f172a,metalness:0.97,roughness:0.08}),
+ bell: new THREE.MeshStandardMaterial({color:0x1a2744,metalness:0.99,roughness:0.04}),
+ wing: new THREE.MeshStandardMaterial({color:0x991b1b,metalness:0.3,roughness:0.45}),
+ steel: new THREE.MeshStandardMaterial({color:0x475569,metalness:0.75,roughness:0.3}),
+ conc: new THREE.MeshStandardMaterial({color:0x374151,roughness:0.9,metalness:0.05}),
+ girder:new THREE.MeshStandardMaterial({color:0x2d3f55,metalness:0.8,roughness:0.2}),
+ solar: new THREE.MeshStandardMaterial({color:0x1a237e,metalness:0.6,roughness:0.25,side:THREE.DoubleSide}),
+ solarCell:new THREE.MeshStandardMaterial({color:0x1565c0,roughness:0.2,metalness:0.15,emissive:0x0a1060,emissiveIntensity:0.4,side:THREE.DoubleSide}),
+ battery:new THREE.MeshStandardMaterial({color:0x78350f,metalness:0.5,roughness:0.4}),
+ gnc: new THREE.MeshStandardMaterial({color:0x2e1065,metalness:0.7,roughness:0.3,emissive:0x4c1d95,emissiveIntensity:0.3}),
+ radarMat:new THREE.MeshBasicMaterial({color:0x00aaff,transparent:true,opacity:0.6,blending:THREE.AdditiveBlending,depthWrite:false}),
+ // 新增材质
+ whlMat:new THREE.MeshStandardMaterial({color:0x1e293b,roughness:.8,metalness:.3}),
+ elecMat:new THREE.MeshStandardMaterial({color:0x065f46,metalness:.6,roughness:.2,emissive:0x059669,emissiveIntensity:.2}),
+ decMat:new THREE.MeshStandardMaterial({color:0x7f1d1d,metalness:.5,roughness:.4}),
+ wingExt:new THREE.MeshStandardMaterial({color:0x155e75,metalness:.3,roughness:.4,emissive:0x0891b2,emissiveIntensity:.15}),
+};
+
+// ─── PAD (v6.0 原有，保留原版setPad函数) ───
+const padGroup=new THREE.Group();scene.add(padGroup);
+function clearPad(){ while(padGroup.children.length){const c=padGroup.children[0];if(c.geometry)c.geometry.dispose();padGroup.remove(c);} }
+function padMesh(geo,mat,x,y,z){ const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;padGroup.add(m);return m; }
+function buildTower(){
+ padMesh(new THREE.BoxGeometry(10,.5,7),M.conc,-1,.25,0);
+ padMesh(new THREE.BoxGeometry(1.4,22,1.4),M.steel,-6,11,0);
+ for(let h=3;h<=18;h+=3)padMesh(new THREE.BoxGeometry(5.5,.3,.3),M.girder,-3.3,h,0);
+ padMesh(new THREE.BoxGeometry(.5,22,.5),M.girder,-3,11,1.5);
+ padMesh(new THREE.BoxGeometry(.5,22,.5),M.girder,-3,11,-1.5);
+ padMesh(new THREE.CylinderGeometry(.15,.15,4,8),M.steel,-6,22.5,0);
+}
+function buildPlatform(){
+ padMesh(new THREE.BoxGeometry(18,.9,12),M.conc,0,.45,0);
+ for(const x of[-6,0,6])for(const z of[-4,4])padMesh(new THREE.CylinderGeometry(.3,.35,3.5,10),M.steel,x,-1.3,z);
+ padMesh(new THREE.BoxGeometry(.7,12,.7),M.steel,-8,6,0);
+ padMesh(new THREE.BoxGeometry(.7,12,.7),M.steel,8,6,0);
+}
+function buildMinimal(){
+ padMesh(new THREE.BoxGeometry(5,.18,5),M.steel,0,.09,0);
+ for(const[x,z]of[[-2,-2],[2,-2],[-2,2],[2,2]])padMesh(new THREE.CylinderGeometry(.18,.18,2.2,8),M.steel,x,-.9,z);
+}
+function buildSilo(){
+ padMesh(new THREE.CylinderGeometry(7,7,14,48,1,true),M.conc,0,-7,0);
+ padMesh(new THREE.CylinderGeometry(7,7,.6,48),M.conc,0,-14,0);
+ const t=padMesh(new THREE.TorusGeometry(7,.5,10,48),M.steel,0,0,0);t.rotation.x=Math.PI/2;
+ for(let a=0;a<4;a++)padMesh(new THREE.BoxGeometry(.6,16,.6),M.steel,7*Math.cos(a*Math.PI/2),8,7*Math.sin(a*Math.PI/2));
+}
+function setPad(shape){
+ clearPad();
+ if(shape==='tower')buildTower();
+ else if(shape==='platform')buildPlatform();
+ else if(shape==='minimal')buildMinimal();
+ else if(shape==='silo')buildSilo();
+ document.querySelectorAll('.pad-btn').forEach(b=>b.classList.toggle('on',b.getAttribute('onclick').includes(`'${shape}'`)));
+}
+
+// ─── SMOKE (v6.0 原有) ───
+function mkSmokeTex(){
+ const cv=document.createElement('canvas');cv.width=cv.height=128;
+ const ctx=cv.getContext('2d');
+ const g=ctx.createRadialGradient(64,64,0,64,64,64);
+ g.addColorStop(0,'rgba(200,195,190,1)');g.addColorStop(.4,'rgba(140,135,130,0.7)');g.addColorStop(1,'rgba(60,55,50,0)');
+ ctx.fillStyle=g;ctx.fillRect(0,0,128,128);
+ return new THREE.CanvasTexture(cv);
+}
+const SMAX=1200,sPos=new Float32Array(SMAX*3),sAlp=new Float32Array(SMAX),sSiz=new Float32Array(SMAX);
+const sGeo=new THREE.BufferGeometry();
+sGeo.setAttribute('position',new THREE.BufferAttribute(sPos,3).setUsage(35048));
+sGeo.setAttribute('alpha',new THREE.BufferAttribute(sAlp,1).setUsage(35048));
+sGeo.setAttribute('psize',new THREE.BufferAttribute(sSiz,1).setUsage(35048));
+const smokePoints=new THREE.Points(sGeo,new THREE.ShaderMaterial({
+ uniforms:{tex:{value:mkSmokeTex()}},
+ vertexShader:`attribute float alpha;attribute float psize;varying float vA;void main(){vA=alpha;vec4 mv=modelViewMatrix*vec4(position,1.);gl_PointSize=psize*(300./(-mv.z));gl_Position=projectionMatrix*mv;}`,
+ fragmentShader:`uniform sampler2D tex;varying float vA;void main(){vec4 t=texture2D(tex,gl_PointCoord);if(t.a*vA<0.01)discard;float b=0.6+vA*0.2;gl_FragColor=vec4(b,b*.95,b*.9,t.a*vA);}`,
+ transparent:true,depthWrite:false,blending:THREE.NormalBlending
+}));
+scene.add(smokePoints);
+const SP=Array.from({length:SMAX},()=>({on:false,life:0,ml:3,px:0,py:0,pz:0,vx:0,vy:.4,vz:0,sz:2}));
+let sNext=0;
+function spawnSmoke(wx,wy,wz){
+ const p=SP[sNext++%SMAX];
+ p.on=true;p.life=0;p.ml=2+Math.random()*2;
+ p.px=wx+(Math.random()-.5)*1.5;p.py=wy;p.pz=wz+(Math.random()-.5)*1.5;
+ const ang=Math.random()*Math.PI*2,sp=.3+Math.random()*1.2;
+ p.vx=Math.cos(ang)*sp*.4;p.vy=.5+Math.random()*1.5;p.vz=Math.sin(ang)*sp*.4;p.sz=1.5+Math.random()*3;
+}
+function updateSmoke(dt){
+ for(let i=0;i<SMAX;i++){
+ const p=SP[i];if(!p.on){sAlp[i]=0;sSiz[i]=0;continue;}
+ p.life+=dt;if(p.life>=p.ml){p.on=false;sAlp[i]=0;sSiz[i]=0;continue;}
+ const t=p.life/p.ml;
+ p.px+=p.vx*dt;p.py+=p.vy*dt;p.pz+=p.vz*dt;
+ p.vy*=(1-.25*dt);p.vx*=(1-.1*dt);p.vz*=(1-.1*dt);
+ sPos[i*3]=p.px;sPos[i*3+1]=p.py;sPos[i*3+2]=p.pz;
+ sAlp[i]=t<.12?t/.12:Math.pow(1-(t-.12)/.88,1.4);sSiz[i]=p.sz*(1+t*2.5);
+ }
+ sGeo.attributes.position.needsUpdate=true;
+ sGeo.attributes.alpha.needsUpdate=true;
+ sGeo.attributes.psize.needsUpdate=true;
+}
+
+// ─── EXPLOSIONS (v6.0 原有) ───
+const expList=[];
+function spawnExplosion(pos,scale=1){
+ playTone(80,0.5,'sawtooth',0.25);playTone(40,0.8,'square',0.15); // 音效
+ const N=80,positions=new Float32Array(N*3),vels=[];
+ for(let i=0;i<N;i++){
+ positions[i*3]=pos.x;positions[i*3+1]=pos.y;positions[i*3+2]=pos.z;
+ vels.push(new THREE.Vector3(Math.random()-.5,Math.random()-.5,Math.random()-.5).normalize().multiplyScalar((.5+Math.random()*2)*scale));
+ }
+ const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(positions,3));
+ const mat=new THREE.PointsMaterial({color:0xff6600,size:.35*scale,transparent:true,opacity:1,blending:THREE.AdditiveBlending,depthWrite:false});
+ const pts=new THREE.Points(geo,mat);scene.add(pts);
+ expList.push({pts,vels,life:0,maxLife:1.8,positions,mat});
+ const fl=new THREE.PointLight(0xff6600,25*scale,15*scale);fl.position.copy(pos);scene.add(fl);
+ expList.push({fl,life:0,maxLife:.35});
+ for(let i=0;i<8;i++){
+ const d=new THREE.Mesh(new THREE.BoxGeometry(.1+Math.random()*.2,.1,.1),new THREE.MeshStandardMaterial({color:0x666688,metalness:.8,roughness:.3}));
+ d.position.copy(pos);
+ const dv=new THREE.Vector3(Math.random()-.5,Math.random()-.5,Math.random()-.5).normalize().multiplyScalar(2+Math.random()*3*scale);
+ expList.push({d,dv,life:0,maxLife:2.5});scene.add(d);
+ }
+}
+function updateExplosions(dt){
+ for(let i=expList.length-1;i>=0;i--){
+ const e=expList[i];e.life+=dt;
+ if(e.fl){e.fl.intensity=(1-e.life/e.maxLife)*25;if(e.life>=e.maxLife){scene.remove(e.fl);expList.splice(i,1);}continue;}
+ if(e.d){
+ e.d.position.addScaledVector(e.dv,dt);e.dv.y-=9.8*VSCALE*dt;
+ e.d.rotation.x+=dt*3;e.d.rotation.z+=dt*2;
+ if(e.life>=e.maxLife){scene.remove(e.d);e.d.geometry.dispose();expList.splice(i,1);}continue;
+ }
+ if(e.life>=e.maxLife){scene.remove(e.pts);e.pts.geometry.dispose();e.pts.material.dispose();expList.splice(i,1);continue;}
+ const t=e.life/e.maxLife;
+ e.mat.opacity=1-t;e.mat.color.setHSL(.07*(1-t),1,.5+t*.4);
+ for(let j=0;j<e.vels.length;j++){
+ e.positions[j*3]+=e.vels[j].x*dt;e.positions[j*3+1]+=e.vels[j].y*dt;e.positions[j*3+2]+=e.vels[j].z*dt;
+ e.vels[j].multiplyScalar(1-dt*.9);
+ }
+ e.pts.geometry.attributes.position.needsUpdate=true;
+ }
+}
+
+// ─── 脱离架（需求10新增） ───
+function activateDecoupler(d){
+ if(d.activated)return;d.activated=true;
+ playTone(60,0.4,'sawtooth',0.2);playTone(120,0.2,'square',0.1);
+ let above=d.ly;let partsAbove=ship.parts.filter(p=>p.ly>above);let accsAbove=ship.accessories.filter(a=>a.ly>above);
+ if(!partsAbove.length){showAccident('无部件可分离');return}
+ partsAbove.forEach(p=>{let idx=ship.parts.indexOf(p);if(idx>=0)ship.parts.splice(idx,1)});
+ accsAbove.forEach(a=>{let idx=ship.accessories.indexOf(a);if(idx>=0)ship.accessories.splice(idx,1)});
+ let rvp=ship.pos.clone().multiplyScalar(VSCALE);
+ partsAbove.forEach(p=>{let debris=new THREE.Mesh(new THREE.BoxGeometry(.3,.3,.3),new THREE.MeshStandardMaterial({color:0x666666,metalness:.5,roughness:.4}));debris.position.copy(rvp).add(new THREE.Vector3(p.lx||0,p.ly||0,p.lz||0).applyQuaternion(ship.quat));let dv=ship.vel.clone().normalize().multiplyScalar(3+Math.random()*3);expList.push({d:debris,dv:dv,life:0,maxLife:8});scene.add(debris)});
+ spawnExplosion(rvp.clone().add(new THREE.Vector3(0,above,0).applyQuaternion(ship.quat)),.8);
+ showAccident('脱离 '+partsAbove.length+'个');syncVisual();
+}
+
+// ─── METEORS (v6.0 原有 + 需求16：自动规避) ───
+const meteors=[];
+const METEOR_MAT=new THREE.MeshStandardMaterial({color:0x7a6a5a,metalness:.2,roughness:.9,emissive:0x332211,emissiveIntensity:.3});
+let meteorTimer=0,meteorWarnTimer=0;
+function spawnMeteor(){
+ const alt=ship.getAlt();if(alt<40000)return;
+ const rvp=ship.pos.clone().multiplyScalar(VSCALE);
+ const size=0.3+Math.random()*0.8;
+ const mesh=new THREE.Mesh(new THREE.SphereGeometry(size,8,8),METEOR_MAT.clone());
+ const offset=new THREE.Vector3((Math.random()-.5)*80,(Math.random()-.5)*80,(Math.random()-.5)*80);
+ mesh.position.copy(rvp).add(offset);
+ const toward=rvp.clone().sub(mesh.position).normalize();
+ const scatter=new THREE.Vector3((Math.random()-.5)*.6,(Math.random()-.5)*.6,(Math.random()-.5)*.6);
+ const vel=toward.clone().add(scatter).normalize().multiplyScalar(4+Math.random()*8);
+ const tGeo=new THREE.BufferGeometry();
+ const tPos=new Float32Array(20*3);tGeo.setAttribute('position',new THREE.BufferAttribute(tPos,3));
+ const tail=new THREE.Points(tGeo,new THREE.PointsMaterial({color:0xff7733,size:.18,transparent:true,opacity:.55,blending:THREE.AdditiveBlending,depthWrite:false}));
+ scene.add(tail);scene.add(mesh);
+ const gl=new THREE.PointLight(0xff5500,1.5,5);mesh.add(gl);
+ meteors.push({mesh,tail,tPos,vel,life:0,maxLife:15,history:[]});
+}
+function updateMeteors(dt){
+ meteorTimer+=dt;
+ if(meteorTimer>3+Math.random()*4){meteorTimer=0;if(ship.getAlt()>40000)spawnMeteor();}
+ const rvp=ship.pos.clone().multiplyScalar(VSCALE);
+ let warn=false,autoEvaded=false;
+ for(let i=meteors.length-1;i>=0;i--){
+ const m=meteors[i];m.life+=dt;
+ m.mesh.position.addScaledVector(m.vel,dt);
+ m.mesh.rotation.x+=dt*2.5;m.mesh.rotation.z+=dt*1.8;
+ m.history.unshift(m.mesh.position.clone());if(m.history.length>12)m.history.pop();
+ for(let j=0;j<12;j++){
+ const h=m.history[j]||m.mesh.position;
+ m.tPos[j*3]=h.x;m.tPos[j*3+1]=h.y;m.tPos[j*3+2]=h.z;
+ }
+ m.tail.geometry.attributes.position.needsUpdate=true;
+ if(m.mesh.position.length()<EARTH_VR+1){spawnExplosion(m.mesh.position.clone().normalize().multiplyScalar(EARTH_VR),1.5);removeMeteor(i);continue;}
+ const dist=m.mesh.position.distanceTo(rvp);
+ if(dist<25)warn=true;
+ if(dist<1.8&&ship.alive){
+ spawnExplosion(m.mesh.position.clone(),2);
+ ship.damage+=55;showAccident('陨石撞击!');
+ if(ship.damage>=100)destroyShip(rvp);
+ removeMeteor(i);continue;
+ }
+ // 自动规避（需求16）
+ if(dist<12&&dist>1.8&&ship.gncLevel>=2&&ship.hasRadar()){
+  if(!autoEvaded){autoEvaded=true;showAccident('自动避险!');ship.getEngines().forEach(e=>{if(!e.failed)e.throttle=1});ship.getElecs().forEach(e=>{if(!e.failed)e.throttle=1});let away=m.mesh.position.clone().sub(rvp).normalize(),up=ship.getUp();ship.quat.premultiply(new THREE.Quaternion().setFromAxisAngle(up,new THREE.Vector3().crossVectors(away,up).normalize().dot(new THREE.Vector3(0,1,0))*3*dt)).normalize()}
+ }
+ if(m.life>m.maxLife)removeMeteor(i);
+ }
+ const warnEl=document.getElementById('meteor-warn');
+ if(warn&&ship.alive){meteorWarnTimer+=dt;warnEl.style.display='block';warnEl.style.opacity=.5+.5*Math.sin(meteorWarnTimer*10);}
+ else{warnEl.style.display='none';meteorWarnTimer=0;}
+ document.getElementById('evade-text').style.display=autoEvaded?'block':'none';
+}
+function removeMeteor(i){
+ const m=meteors[i];scene.remove(m.mesh);scene.remove(m.tail);
+ m.mesh.geometry.dispose();m.tail.geometry.dispose();meteors.splice(i,1);
+}
+
+// ─── ROCKET VISUAL (v6.0 扩展，新增部件渲染) ───
+const rocketGrp=new THREE.Group();scene.add(rocketGrp);
+const engineGlows=[];
+
+function applyRotation(p,mesh){
+ if(p.rx||p.ry||p.rz)mesh.quaternion.setFromEuler(new THREE.Euler(THREE.MathUtils.degToRad(p.rx||0),THREE.MathUtils.degToRad(p.ry||0),THREE.MathUtils.degToRad(p.rz||0)));
+}
+function mkFlameGrp(c){
+ const mk=(rx,h,oy)=>{const g=new THREE.ConeGeometry(rx,h,12);g.translate(0,oy,0);return g;};
+ const inner=new THREE.Mesh(mk(.09,.85,-.42),new THREE.MeshBasicMaterial({color:c||0xffffff,transparent:true,opacity:.96}));
+ const mid=new THREE.Mesh(mk(.17,1.3,-.65),new THREE.MeshBasicMaterial({color:c||0x80dfff,transparent:true,opacity:.72}));
+ const outer=new THREE.Mesh(mk(.28,1.9,-.95),new THREE.MeshBasicMaterial({color:c||0x0088dd,transparent:true,opacity:.38}));
+ const g=new THREE.Group();g.add(inner,mid,outer);g.visible=false;g.userData={inner,mid,outer};return g;
+}
+
+function buildSolarPanelMesh(panel, group){
+ const side=panel.lx>=0?1:-1;
+ const pivot=new THREE.Group();
+ pivot.position.set(panel.lx, panel.ly, panel.lz);
+ const wing1=new THREE.Mesh(new THREE.BoxGeometry(1.4,0.05,1.1),M.solar);
+ wing1.position.x=side*0.7;
+ const cells1=new THREE.Mesh(new THREE.BoxGeometry(1.3,0.07,1.0),M.solarCell);
+ cells1.position.x=side*0.7;
+ const wing2=new THREE.Mesh(new THREE.BoxGeometry(1.4,0.05,1.1),M.solar);
+ wing2.position.x=side*2.1;
+ const cells2=new THREE.Mesh(new THREE.BoxGeometry(1.3,0.07,1.0),M.solarCell);
+ cells2.position.x=side*2.1;
+ const strut=new THREE.Mesh(new THREE.BoxGeometry(Math.abs(side)*0.08,0.08,0.08),M.steel);
+ strut.position.x=side*1.4;
+ pivot.add(wing1,cells1,wing2,cells2,strut);
+ applyRotation(panel,pivot);
+ group.add(pivot);
+ panel._pivot=pivot;
+ panel.deployAngle=panel.deployed?1:0;
+ const foldAngle=side>0?-Math.PI/2:Math.PI/2;
+ pivot.rotation.z=foldAngle*(1-panel.deployAngle);
+}
+
+function buildRadarMesh(radar, group){
+ const grp=new THREE.Group();
+ grp.position.set(radar.lx, radar.ly+0.5, radar.lz);
+ const ring=new THREE.Mesh(new THREE.TorusGeometry(2.2,0.04,8,48),M.radarMat.clone());
+ ring.rotation.x=Math.PI/2;
+ const ring2=new THREE.Mesh(new THREE.TorusGeometry(1.5,0.03,6,32),M.radarMat.clone());
+ ring2.rotation.x=Math.PI/4;
+ const beam=new THREE.Mesh(new THREE.BoxGeometry(2.2,0.02,0.02),new THREE.MeshBasicMaterial({color:0x00ffcc,transparent:true,opacity:0.5,blending:THREE.AdditiveBlending,depthWrite:false}));
+ beam.position.x=1.1;
+ const dish=new THREE.Mesh(new THREE.ConeGeometry(0.15,0.25,8),new THREE.MeshStandardMaterial({color:0x93c5fd,metalness:0.9,roughness:0.1}));
+ dish.rotation.x=Math.PI;
+ grp.add(ring,ring2,beam,dish);
+ applyRotation(radar,grp);
+ group.add(grp);
+ radar._grp=grp; radar._ring=ring; radar._ring2=ring2; radar._beam=beam; radar._scanAngle=0;
+}
+
+function buildBatteryMesh(bat, group){
+ const m=new THREE.Mesh(new THREE.BoxGeometry(0.55,0.55,0.55),M.battery);
+ m.position.set(bat.lx,bat.ly,bat.lz);m.castShadow=true;
+ const strip=new THREE.Mesh(new THREE.BoxGeometry(0.57,0.12,0.57),new THREE.MeshStandardMaterial({color:0xfbbf24,metalness:0.5,roughness:0.3}));
+ strip.position.set(bat.lx,bat.ly+0.22,bat.lz);
+ applyRotation(bat,m);
+ group.add(m,strip);bat._mesh=m;
+}
+
+function buildGNCMesh(gnc, group){
+ const m=new THREE.Mesh(new THREE.BoxGeometry(0.45,0.30,0.45),M.gnc);
+ m.position.set(gnc.lx,gnc.ly,gnc.lz);m.castShadow=true;
+ const glow=new THREE.PointLight(0x9333ea,0.8,3);
+ glow.position.set(gnc.lx,gnc.ly,gnc.lz);
+ applyRotation(gnc,m);
+ group.add(m,glow);gnc._mesh=m;gnc._glow=glow;
+}
+
+function syncVisual(){
+ while(rocketGrp.children.length){const c=rocketGrp.children[0];if(c.geometry)c.geometry.dispose();rocketGrp.remove(c);}
+ engineGlows.length=0;
+ const tanks=ship.getTanks(),engs=ship.getEngines();
+ // 油箱
+ tanks.forEach(t=>{
+ const m=new THREE.Mesh(new THREE.CylinderGeometry(.47,.47,2.1,32),M.tank);
+ m.position.set(t.lx,t.ly,t.lz);m.castShadow=true;applyRotation(t,m);rocketGrp.add(m);
+ const b=new THREE.Mesh(new THREE.CylinderGeometry(.485,.485,.22,32),M.stripe);
+ b.position.set(t.lx,t.ly+.55,t.lz);rocketGrp.add(b);
+ const b2=b.clone();b2.position.set(t.lx,t.ly-.55,t.lz);rocketGrp.add(b2);
+ });
+ // 引擎
+ engs.forEach(e=>{
+ const bracket=new THREE.Mesh(new THREE.CylinderGeometry(.18,.18,.45,16),M.eng);
+ bracket.position.set(e.lx,e.ly+.22,e.lz);rocketGrp.add(bracket);
+ const bell=new THREE.Mesh(new THREE.ConeGeometry(.34,.58,24),M.bell);
+ bell.position.set(e.lx,e.ly,e.lz);bell.rotation.x=Math.PI;bell.castShadow=true;rocketGrp.add(bell);
+ const ring=new THREE.Mesh(new THREE.TorusGeometry(.3,.045,8,24),M.eng);
+ ring.position.set(e.lx,e.ly-.29,e.lz);ring.rotation.x=Math.PI/2;rocketGrp.add(ring);
+ const gl=new THREE.PointLight(0x40bfff,0,8);gl.position.set(e.lx,e.ly-.5,e.lz);rocketGrp.add(gl);
+ engineGlows.push({light:gl,eng:e});
+ const fg=mkFlameGrp();fg.position.set(e.lx,e.ly-.29,e.lz);e._fg=fg;rocketGrp.add(fg);
+ });
+ // 轮子（需求7）
+ ship.getWheels().forEach(w=>{
+  let g=new THREE.Group();g.position.set(w.lx,w.ly,w.lz);
+  let t=new THREE.Mesh(new THREE.TorusGeometry(.4,.12,8,16),M.whlMat);t.rotation.x=Math.PI/2;g.add(t);
+  let h=new THREE.Mesh(new THREE.CylinderGeometry(.1,.1,.12,8),M.steel);h.rotation.x=Math.PI/2;g.add(h);
+  let st=new THREE.Mesh(new THREE.BoxGeometry(.08,.8,.08),M.steel);st.position.y=-.4;g.add(st);
+  g.visible=w.deployed;rocketGrp.add(g);w._vis=g;
+ });
+ // 电引擎（需求9）
+ ship.getElecs().forEach(e=>{
+  let bd=new THREE.Mesh(new THREE.CylinderGeometry(.28,.28,.4,16),M.elecMat);bd.position.set(e.lx,e.ly+0.1,e.lz);rocketGrp.add(bd);
+  let nz=new THREE.Mesh(new THREE.ConeGeometry(.25,.3,16),new THREE.MeshStandardMaterial({color:0x059669,metalness:.6,roughness:.2}));nz.position.set(e.lx,e.ly-.15,e.lz);nz.rotation.x=Math.PI;rocketGrp.add(nz);
+  let gl=new THREE.PointLight(0x34d399,0,5);gl.position.set(e.lx,e.ly-.3,e.lz);rocketGrp.add(gl);engineGlows.push({light:gl,eng:e});
+  let fg=mkFlameGrp(0x34d399);fg.position.set(e.lx,e.ly-.15,e.lz);e._fg=fg;rocketGrp.add(fg);
+ });
+ // 脱离架（需求10）
+ ship.getDecos().forEach(d=>{
+  let m=new THREE.Mesh(new THREE.TorusGeometry(.5,.08,8,24),M.decMat);m.position.set(d.lx,d.ly,d.lz);m.rotation.x=Math.PI/2;rocketGrp.add(m);
+  let b=new THREE.Mesh(new THREE.TorusGeometry(.52,.04,4,12),new THREE.MeshStandardMaterial({color:0x94a3b8,metalness:.8,roughness:.2}));b.position.set(d.lx,d.ly,d.lz);b.rotation.x=Math.PI/2;rocketGrp.add(b);
+ });
+ // 机翼（需求15）
+ ship.getWings().forEach(w=>{
+  let fn=()=>{let wv=new Float32Array([-1.2,0,.05,1.2,0,.05,1.2,.7,.05,-1.2,0,.05,1.2,.7,.05,-1.2,.55,.05,-1.2,0,-.05,1.2,.7,-.05,1.2,0,-.05,-1.2,0,-.05,-1.2,.55,-.05,1.2,.7,-.05]);let wg=new THREE.BufferGeometry();wg.setAttribute('position',new THREE.BufferAttribute(wv,3));wg.computeVertexNormals();return wg};
+  let wMat=w.extended?M.wing:M.wingExt;let w1=new THREE.Mesh(fn(),wMat);w1.position.set(w.lx,w.ly,w.lz);applyRotation(w,w1);rocketGrp.add(w1);
+  let w2=w1.clone();w2.rotation.y=Math.PI/2;w2.position.set(w.lx,w.ly,w.lz);rocketGrp.add(w2);w._vis=w1;
+ });
+ // 指挥舱（v6.0原有）
+ const topY=tanks.length>0?Math.max(...tanks.map(t=>t.ly+1.05)):2;
+ const pod=new THREE.Mesh(new THREE.ConeGeometry(.47,1.3,32),M.pod);
+ pod.position.y=topY+.65;pod.castShadow=true;rocketGrp.add(pod);
+ const pb=new THREE.Mesh(new THREE.CylinderGeometry(.47,.47,.3,32),M.pod);
+ pb.position.y=topY+.15;rocketGrp.add(pb);
+ // 配件
+ ship.accessories.forEach(acc=>{
+ if(!acc.connected) return;
+ if(acc.type==='solar') buildSolarPanelMesh(acc, rocketGrp);
+ else if(acc.type==='battery') buildBatteryMesh(acc, rocketGrp);
+ else if(acc.type==='gnc') buildGNCMesh(acc, rocketGrp);
+ else if(acc.type==='radar') buildRadarMesh(acc, rocketGrp);
+ });
+ renderPartsUI();
+ updateAccessoryUI();
+}
+
+// ─── PARTS UI (v6.0 扩展：旋转) ───
+function renderPartsUI(){
+ const el=document.getElementById('parts-list');el.innerHTML='';
+ ship.parts.forEach(p=>{
+ const isE=p.type==='engine'||p.type==='elec';
+ const card=document.createElement('div');card.className='part-card';
+ const failBadge=isE&&p.failed?'<span style="color:#ef4444;font-size:10px;margin-left:5px">故障</span>':'';
+ const typeLabels={tank:'燃料箱',engine:'推进器',wheel:'轮子',elec:'电引擎',deco:'脱离架',wing:'机翼'};
+ const label=typeLabels[p.type]||p.type;
+ card.innerHTML=`
+ <div class="card-head">
+ <span class="part-name">${label} #${p.id}${failBadge}</span>
+ <button class="btn btn-sm btn-red" onclick="removePart(${p.id})">X</button>
+ </div>
+ <div class="coord-row">
+ <div class="coord-wrap"><div class="coord-lbl">X</div><input class="coord-in" type="number" step="0.1" value="${(p.lx||0).toFixed(2)}" onchange="setCoord(${p.id},'lx',+this.value)"></div>
+ <div class="coord-wrap"><div class="coord-lbl">Y</div><input class="coord-in" type="number" step="0.1" value="${(p.ly||0).toFixed(2)}" onchange="setCoord(${p.id},'ly',+this.value)"></div>
+ <div class="coord-wrap"><div class="coord-lbl">Z</div><input class="coord-in" type="number" step="0.1" value="${(p.lz||0).toFixed(2)}" onchange="setCoord(${p.id},'lz',+this.value)"></div>
+ </div>
+ <div class="coord-row" style="margin-top:2px">
+ <div class="coord-wrap"><div class="coord-lbl" style="color:#a78bfa">RX</div><input class="coord-in" type="number" step="5" value="${p.rx||0}" onchange="setRot(${p.id},'rx',+this.value)"></div>
+ <div class="coord-wrap"><div class="coord-lbl" style="color:#a78bfa">RY</div><input class="coord-in" type="number" step="5" value="${p.ry||0}" onchange="setRot(${p.id},'ry',+this.value)"></div>
+ <div class="coord-wrap"><div class="coord-lbl" style="color:#a78bfa">RZ</div><input class="coord-in" type="number" step="5" value="${p.rz||0}" onchange="setRot(${p.id},'rz',+this.value)"></div>
+ </div>
+ ${isE?`<div class="thr-row"><label>节流:</label><input type="range" min="0" max="1" step="0.05" value="${p.throttle}" oninput="setThrottle(${p.id},+this.value)"><span class="thr-val" id="tv-${p.id}">${(p.throttle*100).toFixed(0)}%</span></div>`
+ :`<div class="fuel-info">${p.type==='tank'?'燃料: <span style="color:#38bdf8">'+p.currentFuel.toFixed(0)+'</span>/'+p.maxFuel+' kg':p.type==='wheel'?(p.deployed?'已展开':'已收起'):p.type==='wing'?(p.extended?'展开':'收起'):''}</div>`}
+ `;
+ el.appendChild(card);
+ });
+}
+function setCoord(id,axis,v){const p=ship.parts.find(x=>x.id===id);if(p){p[axis]=v;syncVisual();}}
+function setRot(id,axis,v){const p=ship.parts.find(x=>x.id===id);if(p){p[axis]=v;syncVisual();}}
+function setThrottle(id,v){const e=ship.parts.find(x=>x.id===id);if(e&&(e.type==='engine'||e.type==='elec')){e.throttle=Math.max(0,Math.min(1,v));const el=document.getElementById('tv-'+id);if(el)el.innerText=(v*100).toFixed(0)+'%';}}
+function removePart(id){ship.parts=ship.parts.filter(x=>x.id!==id);syncVisual();}
+function addPart(type){
+ if(type==='tank'){const t=new FuelTank();const tanks=ship.getTanks();t.ly=tanks.length>0?Math.max(...tanks.map(tk=>tk.ly))+2.1:1.0;ship.parts.push(t);}
+ else if(type==='engine'){const e=new Engine();const n=ship.getEngines().length;e.lx=0;e.ly=0.2;ship.parts.push(e);}
+ else if(type==='wheel'){const w=new WheelPart();w.ly=0.1;ship.parts.push(w);}
+ else if(type==='elec'){const e=new ElecPart();e.lx=0;e.ly=0.2;ship.parts.push(e);}
+ else if(type==='deco'){const d=new DecouplerPart();d.ly=0.3;ship.parts.push(d);}
+ else if(type==='wing'){const w=new WingPart();w.ly=0.5;ship.parts.push(w);}
+ syncVisual();
+}
+
+// ─── 配件 UI（v6.0 原有 + 可重复） ───
+let accessoryInstanceCount={solar:0,battery:0,radar:0,gnc:0};
+function addAccessory(type){
+ const accMap={solar:()=>new SolarPanel(),battery:()=>new BatteryBank(),radar:()=>new MeteorRadar(),gnc:()=>new GNCComputer()};
+ if(accMap[type]){ship.accessories.push(accMap[type]());syncVisual();interpret.renderUI();renderAccList();}
+}
+function removeAccessory(id){ship.accessories=ship.accessories.filter(a=>a.id!==id);syncVisual();interpret.renderUI();renderAccList();}
+function renderAccList(){
+ const el=document.getElementById('acc-list');if(!el)return;el.innerHTML='';
+ const labels={solar:'太阳板',battery:'电池',radar:'雷达',gnc:'GNC'};
+ ship.accessories.filter(a=>a.connected).forEach(a=>{
+  const d=document.createElement('div');d.className='acc-list-item';
+  let ex='';
+  if(a.type==='solar')ex=a.deployed?'已展':'折叠';
+  else if(a.type==='battery')ex=a.currentStorage.toFixed(0)+'Wh';
+  else if(a.type==='radar')ex=a.status;
+  else if(a.type==='gnc')ex='在线';
+  d.innerHTML='<span>'+(labels[a.type]||a.type)+' #'+a.id+' <span style=color:#475569>'+ex+'</span></span><button class="btn btn-sm btn-red" onclick=removeAccessory('+a.id+')>X</button>';
+  el.appendChild(d);
+ });
+}
+
+function updateAccessoryUI(){
+ renderAccList();
+ ['solar','battery','radar','gnc'].forEach(type=>{
+ const btn=document.querySelector(`#blueprint-panel .acc-btn[onclick*="'${type}'"]`);
+ if(!btn)return;
+ const has=ship.accessories.some(a=>a.type===type&&a.connected);
+ btn.classList.toggle('on',has);
+ });
+ const info=document.getElementById('acc-info');
+ if(!info)return;
+ const lines=[];
+ ship.accessories.filter(a=>a.connected).forEach(a=>{
+ if(a.type==='solar') lines.push(`太阳板: ${a.deployed?'已展开':'已折叠'} | 最大 ${a.maxPower}W`);
+ else if(a.type==='battery') lines.push(`蓄电池: ${a.currentStorage.toFixed(0)}/${a.maxStorage} Wh`);
+ else if(a.type==='gnc') lines.push(`GNC: 在线 | 功耗 ${a.powerDraw}W`);
+ else if(a.type==='radar') lines.push(`雷达: ${a.status} | 功耗 ${a.powerDraw}W`);
+ });
+ info.innerHTML=lines.join('<br>')||'<span style="color:#334155">无配件安装</span>';
+}
+
+// ─── ACCIDENTS (v6.0 原有) ───
+const accidents=[];let accTimer=0;
+function checkAccidents(dt){
+ if(!ship.alive) return;
+ const alt=ship.getAlt(),spd=ship.vel.length();
+ const rho=1.225*Math.exp(-alt/8500);
+ const dynQ=.5*rho*spd*spd;
+ if(dynQ>50000){ship.damage+=dt*8;showAccident('高动压! Max-Q!');}
+ if(ship.damage>=100){destroyShip(rocketGrp.position.clone());return;}
+ accTimer+=dt;
+ if(accTimer>25){
+ accTimer=0;
+ ship.getEngines().forEach(e=>{
+ if(e.throttle>.88&&!e.failed&&Math.random()<.12){
+ e.failed=true;spawnExplosion(rocketGrp.position.clone(),.5);
+ showAccident(`推进器 #${e.id} 故障!`);renderPartsUI();
+ }
+ });
+ const tanks=ship.getTanks().filter(t=>t.currentFuel>0);
+ if(tanks.length&&alt>10000&&Math.random()<.05){
+ const t=tanks[Math.floor(Math.random()*tanks.length)];
+ t.currentFuel*=.7;showAccident('燃料泄漏!');
+ }
+ }
+}
+function showAccident(msg){
+ accidents.push({msg,timer:4});document.getElementById('accident-bar').innerText=msg;
+ if(msg.includes('陨石')||msg.includes('故障')||msg.includes('泄漏')||msg.includes('动压')){playTone(800,0.15,'square',0.1);setTimeout(()=>playTone(1000,0.1,'square',0.08),200)}
+}
+function updateAccidents(dt){
+ for(let i=accidents.length-1;i>=0;i--){accidents[i].timer-=dt;if(accidents[i].timer<=0)accidents.splice(i,1);}
+ const el=document.getElementById('accident-bar');
+ if(accidents.length){el.innerText=accidents[accidents.length-1].msg;el.style.opacity=Math.min(1,accidents[accidents.length-1].timer);}
+ else el.innerText='';
+}
+
+// ─── DESTROY SHIP (v6.0 原有) ───
+function destroyShip(vpos){
+ if(ship.destroyed) return;ship.destroyed=true;ship.alive=false;rocketGrp.visible=false;
+ for(let i=0;i<6;i++)
+ spawnExplosion(vpos.clone().add(new THREE.Vector3((Math.random()-.5)*3,(Math.random()-.5)*3,(Math.random()-.5)*3)),1.5+Math.random());
+ document.getElementById('alert-box').style.display='block';
+}
+
+// ─── AUTOPILOT (L3) + FPV ───
+function toggleAuto(){
+ if(ship.gncLevel<3){showAccident('需要L3!');return}
+ ship.autoPilot=!ship.autoPilot;
+ document.getElementById('auto-st').innerText=ship.autoPilot?'运行':'就绪';
+ if(ship.autoPilot){ship.getEngines().forEach(e=>{if(!e.failed)e.throttle=.5});ship.getElecs().forEach(e=>{if(!e.failed)e.throttle=.5});showAccident('L3自动启动')}
+}
+function autoPilotUpdate(dt){
+ if(!ship.autoPilot||!ship.alive||ship.gncLevel<3)return;
+ let a=ship.getAlt(),sp=ship.vel.length(),lu=ship.getUp();
+ let setThrust=(v)=>{ship.getEngines().forEach(e=>{if(!e.failed)e.throttle=v});ship.getElecs().forEach(e=>{if(!e.failed)e.throttle=v})};
+ if(a<1000){setThrust(.85);let cu=new THREE.Vector3(0,1,0).applyQuaternion(ship.quat);ship.quat.slerp(ship.quat.clone().premultiply(new THREE.Quaternion().setFromUnitVectors(cu,lu).multiplyScalar(.5*dt)),.5);ship.quat.normalize()}
+ else if(a<60000){setThrust(1);let r=new THREE.Vector3(1,0,0).applyQuaternion(ship.quat);ship.quat.premultiply(new THREE.Quaternion().setFromAxisAngle(r,-.15*dt)).normalize()}
+ else if(a<210000){let ts=sp<7900?1:.4;setThrust(ts);let td=new THREE.Vector3(0,1,0).applyQuaternion(ship.quat);if(Math.acos(Math.min(1,Math.max(-1,td.dot(lu))))>.05){let r=new THREE.Vector3(1,0,0).applyQuaternion(ship.quat);ship.quat.premultiply(new THREE.Quaternion().setFromAxisAngle(r,-.1*dt)).normalize()}}
+ else{let ts=sp<7900?.5:0;setThrust(ts);let cu=new THREE.Vector3(0,1,0).applyQuaternion(ship.quat);if(Math.acos(Math.min(1,Math.max(-1,cu.dot(lu))))>.05){let r=new THREE.Vector3(1,0,0).applyQuaternion(ship.quat);ship.quat.premultiply(new THREE.Quaternion().setFromAxisAngle(r,-.08*dt)).normalize()}}
+}
+
+// FPV（需求12）
+function toggleFPV(){camM=camM=='orbit'?'fpv':'orbit';document.getElementById('cam-st').innerText=camM=='orbit'?'轨道':'FPV';document.getElementById('fpv-btn').style.opacity=camM=='fpv'?'1':'.6';document.getElementById('fpv-ch').style.display=camM=='fpv'?'block':'none';if(camM=='fpv'){controls.enabled=false;renderer.domElement.requestPointerLock();document.body.style.cursor='crosshair'}else{controls.enabled=true;controls.target.copy(rocketGrp.position);if(document.pointerLockElement)document.exitPointerLock();document.body.style.cursor='default'}}
+let camM='orbit',fps=.002;
+addEventListener('mousemove',e=>{if(camM!='fpv'||!document.pointerLockElement)return;let lu=ship.getUp(),rt=new THREE.Vector3(1,0,0).applyQuaternion(ship.quat);let yq=new THREE.Quaternion().setFromAxisAngle(lu,-e.movementX*fps);ship.quat.premultiply(yq).normalize();let pq=new THREE.Quaternion().setFromAxisAngle(rt,-e.movementY*fps);let tq=ship.quat.clone().premultiply(pq);if(new THREE.Vector3(0,1,0).applyQuaternion(tq).dot(lu)>.1)ship.quat.premultiply(pq).normalize()});
+addEventListener('click',()=>{if(camM=='fpv'&&!document.pointerLockElement)renderer.domElement.requestPointerLock()});
+
+// AI GNC
+let aiActive=0,aiReason='',aiFail=0,aiTimer=0,aiCmd={throttle:.5,pitch:0,yaw:0,decouple:0,reason:'等待AI...'};
+function aiGNCUpdate(dt){
+ if(!ship.alive||ship.gncLevel<4||!aiActive)return;
+ aiTimer+=dt;if(aiTimer<2)return;aiTimer=0;
+ let rho=1.225*Math.exp(-ship.getAlt()/8500);let dq=.5*rho*ship.vel.length()*ship.vel.length()/1000;
+ let tel={altitude_m:ship.getAlt(),velocity_ms:ship.vel.length(),mass_kg:ship.getMass(),fuel_kg:ship.getFuel().cur,thrust_n:ship.getTotalThrust(),dyn_q_kpa:dq,twr:ship.getTotalThrust()/(ship.getMass()*9.81),damage_pct:ship.damage};
+ fetch('http://localhost:18888/gnc',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({telemetry:tel,mission:'升空入轨'})}).then(r=>r.json()).then(d=>{aiCmd={throttle:d.throttle||.5,pitch:d.pitch_angle||0,yaw:d.yaw_rate||0,decouple:!!d.decouple,reason:d.reason||'AI'};if(dq>50){aiCmd.throttle=.3;aiCmd.pitch=0;aiCmd.reason='Max-Q!'}else if(dq>40){aiCmd.throttle=Math.min(aiCmd.throttle,.6)}aiReason=aiCmd.reason;document.getElementById('ai-reason').innerText=aiCmd.reason}).catch(e=>{aiFail++;if(aiFail>3){aiCmd={throttle:.8,pitch:Math.min((ship.getAlt()/60000)*80,80),yaw:0,decouple:0,reason:'AI离线'};aiReason='AI离线';document.getElementById('ai-reason').innerText='AI离线 应急'}})
+}
+
+// ─── CONTROLS (v6.0 扩展) ───
+const kb={w:false,s:false,a:false,d:false,ArrowUp:false,ArrowDown:false};
+addEventListener('keydown',e=>{
+ if(e.key in kb) kb[e.key]=true;
+ if(e.key==='r'||e.key==='R') resetAll();
+ if(e.key==='t'||e.key==='T') interpreter.togglePanel();
+ if(e.key==='m'||e.key==='M'){const mp=document.getElementById('mission-box');mp.style.display=mp.style.display==='none'?'block':'none'}
+ if(e.key==='p'||e.key==='P') toggleAuto();
+ if(e.key==='v'||e.key==='V') toggleFPV();
+ if(e.key==='h'||e.key==='H') toggleState();
+ if(e.key==='f'||e.key==='F'){const g=ship.getGNCModule();if(g&&g.failed){const b=ship.getBattery();if(b&&b.currentStorage>=200){b.currentStorage-=200;g.failed=false;ship.gncLevel=g.level||1;setGNCLabel();showAccident('GNC已修复')}else showAccident('电量不足')}}
+ if(e.key===' ') e.preventDefault();
+});
+addEventListener('keyup',e=>{if(e.key in kb) kb[e.key]=false;});
+
+// ─── SKY / ENERGY / RADAR (v6.0 原有) ───
+function updateSkyColor(alt){
+ let r,g,b;
+ if(alt<12000){const t=alt/12000;r=.35*(1-t)+.02*t;g=.55*(1-t)+.03*t;b=.9*(1-t)+.06*t;}
+ else if(alt<60000){const t=(alt-12000)/48000;r=.02*(1-t)+.003*t;g=.03*(1-t)+.003*t;b=.06*(1-t)+.01*t;}
+ else{r=0;g=0;b=.003;}
+ renderer.setClearColor(new THREE.Color(r,g,b),1);
+}
+function updateEnergy(dt){
+ const battery=ship.getBattery();
+ let solarW=0;
+ ship.getSolarPanels().forEach(p=>{ solarW+=p.getPower(SUN_DIR,ship.quat); });
+ let drawW=0;
+ const poweredAccs=[];
+ ship.accessories.forEach(a=>{
+ if(!a.connected) return;
+ if(a.type==='gnc'){ drawW+=a.powerDraw; poweredAccs.push(a); }
+ if(a.type==='radar'){ drawW+=a.powerDraw; poweredAccs.push(a); }
+ });
+ // 电引擎耗电
+ ship.getElecs().forEach(e=>{if(e.throttle>0&&!e.failed)drawW+=e.powerDraw*e.throttle});
+ const net=solarW-drawW;
+ if(battery){
+ if(net>0){battery.charge(net,dt);ship.accessories.forEach(a=>{if(!a.connected&&(a.type==='gnc'||a.type==='radar'))a.connected=true;});}
+ else if(net<0){if(!battery.draw(-net,dt)){poweredAccs.forEach(a=>{a.connected=false;});ship.getElecs().forEach(e=>{e.throttle=0});showAccident('电源不足!');}}
+ battery.currentStorage=Math.max(0,Math.min(battery.maxStorage,battery.currentStorage));
+ }
+}
+function updateRadar(dt){
+ const radar=ship.accessories.find(a=>a.type==='radar'&&a.connected);
+ if(!radar||!radar._grp) return;
+ radar._scanAngle=(radar._scanAngle||0)+dt*2.5;
+ if(radar._ring) radar._ring.rotation.z=radar._scanAngle;
+ if(radar._ring2) radar._ring2.rotation.y=radar._scanAngle*0.7;
+ const rvp=ship.pos.clone().multiplyScalar(VSCALE);
+ const rangeVis=radar.range*VSCALE;
+ const nearby=meteors.filter(m=>m.mesh.position.distanceTo(rvp)<rangeVis);
+ if(nearby.length>0){
+ radar.status='warning';
+ if(radar._ring) radar._ring.material.color.setHex(0xff3300);
+ if(radar._ring2) radar._ring2.material.color.setHex(0xff3300);
+ if(radar._beam) radar._beam.material.color.setHex(0xff5500);
+ } else if(ship.getAlt()>1000){
+ radar.status='scanning';
+ if(radar._ring) radar._ring.material.color.setHex(0x00aaff);
+ if(radar._ring2) radar._ring2.material.color.setHex(0x00ccff);
+ if(radar._beam) radar._beam.material.color.setHex(0x00ffcc);
+ } else {
+ radar.status='standby';
+ }
+}
+
+// ─── PHYSICS (v6.0 原有 + 需求18：离心力+月球引力) ───
+let smokeAccum=0;
+const _tmpQ=new THREE.Quaternion();
+const _tmpV=new THREE.Vector3();
+
+function updatePhysics(dt){
+ if(!ship.alive) return;
+ const r=ship.pos.length();
+ const alt=r-PHY.R;
+ const localUp=ship.getUp();
+ const thrustDir=_tmpV.set(0,1,0).applyQuaternion(ship.quat);
+
+ // AI控制（L4）
+ const isAI=ship.gncLevel>=4&&aiActive;
+ const isAuto=ship.autoPilot&&ship.gncLevel>=3;
+ const isManual=!isAuto&&!isAI&&!interpreter.running;
+
+ if(isAI){
+  // AI控制
+  let td2=new THREE.Vector3(0,1,0).applyQuaternion(ship.quat);let lu2=ship.getUp();let ta=THREE.MathUtils.degToRad(90-aiCmd.pitch);let ca=Math.acos(Math.min(1,Math.max(-1,td2.dot(lu2))));let df=ta-ca;
+  if(Math.abs(df)>.02){let r2=new THREE.Vector3(1,0,0).applyQuaternion(ship.quat);ship.quat.premultiply(new THREE.Quaternion().setFromAxisAngle(r2,df>0?.3*dt:-.3*dt)).normalize()}
+  ship.getEngines().forEach(e=>{if(!e.failed)e.throttle=aiCmd.throttle});ship.getElecs().forEach(e=>{if(!e.failed)e.throttle=aiCmd.throttle});
+  if(aiCmd.yaw)ship.quat.premultiply(new THREE.Quaternion().setFromAxisAngle(ship.getUp(),aiCmd.yaw*.5*dt)).normalize();
+  if(aiCmd.decouple){let d=ship.getDecos().find(dd=>!dd.activated);if(d)activateDecoupler(d);aiCmd.decouple=0}
+ }else if(isAuto){}else if(isManual){
+  if(kb.w) ship.getEngines().forEach(e=>{if(!e.failed)e.throttle=Math.min(1,e.throttle+dt*.6);});
+  if(kb.s) ship.getEngines().forEach(e=>{if(!e.failed)e.throttle=Math.max(0,e.throttle-dt*.6);});
+  if(kb.a||kb.d){
+  _tmpQ.setFromAxisAngle(localUp,(kb.a?1:-1)*dt*.9);
+  ship.quat.premultiply(_tmpQ).normalize();
+  }
+  if(kb.ArrowUp||kb.ArrowDown){
+  const right=new THREE.Vector3(1,0,0).applyQuaternion(ship.quat);
+  _tmpQ.setFromAxisAngle(right,(kb.ArrowDown?1:-1)*dt*.9);
+  ship.quat.premultiply(_tmpQ).normalize();
+  }
+ }
+
+ // Variable mass
+ const M=ship.getMass();
+ const fuel=ship.getFuel();
+ const engs=ship.getEngines();
+ const elecs=ship.getElecs();
+
+ // Thrust
+ const tF=new THREE.Vector3();
+ if(fuel.cur>0){
+ engs.forEach(e=>{
+ if(e.failed||e.throttle<=0) return;
+ tF.addScaledVector(thrustDir, e.getThrust());
+ });
+ const totalBurn=engs.reduce((s,e)=>s+e.getBurnRate(),0)*dt;
+ if(totalBurn>0) ship.burnFuel(totalBurn);
+ }
+ elecs.forEach(e=>{if(e.failed||e.throttle<=0)return;tF.addScaledVector(thrustDir,e.getThrust())});
+
+ // 地球引力 (逆平方)
+ const gMag=(PHY.G*PHY.M)/(r*r);
+ const gF=localUp.clone().negate().multiplyScalar(gMag*M);
+
+ // 离心力（需求18）
+ const spd=ship.vel.length();
+ const localH=ship.vel.clone().sub(localUp.clone().multiplyScalar(ship.vel.dot(localUp))).normalize();
+ const centriF=localH.clone().multiplyScalar(M*spd*spd/r);
+
+ // 月球引力（需求13+18）
+ const moonPos=new THREE.Vector3(Math.cos(moonAngle)*MOON_ORBIT,0,Math.sin(moonAngle)*MOON_ORBIT);
+ const m2s=ship.pos.clone().sub(moonPos);const mDist=m2s.length();let moonGF=new THREE.Vector3();
+ if(mDist>0){const mG=PHY.G*MOON_MASS/(mDist*mDist);moonGF=m2s.clone().negate().normalize().multiplyScalar(mG)}
+
+ // Aerodynamic drag
+ const rho=1.225*Math.exp(-alt/8500);
+ const dF=new THREE.Vector3();
+ if(spd>0&&alt<130000) dF.copy(ship.vel).normalize().negate().multiplyScalar(.5*rho*spd*spd*.35*12);
+
+ // Net force
+ const netF=new THREE.Vector3().add(gF).add(tF).add(centriF).add(moonGF).add(dF);
+ const acc=netF.clone().divideScalar(M);
+ ship.vel.addScaledVector(acc,dt);
+ ship.pos.addScaledVector(ship.vel,dt);
+
+ // Ground collision
+ if(ship.pos.length()<=PHY.R+.5){
+ const impact=ship.vel.length();
+ if(impact>25){destroyShip(ship.pos.clone().normalize().multiplyScalar(EARTH_VR));return;}
+ ship.pos.normalize().multiplyScalar(PHY.R+.5);
+ const vr=localUp.clone().multiplyScalar(ship.vel.dot(localUp));
+ if(ship.vel.dot(localUp)<0) ship.vel.sub(vr);
+ ship.vel.multiplyScalar(.92);
+ const curUp=new THREE.Vector3(0,1,0).applyQuaternion(ship.quat);
+ _tmpQ.setFromUnitVectors(curUp,ship.getUp());
+ ship.quat.premultiply(_tmpQ).normalize();
+ }
+
+ // Smoke
+ smokeAccum+=dt;
+ const mThr=engs.length?engs.reduce((s,e)=>s+e.throttle,0)/engs.length:0;
+ if(fuel.cur>0&&mThr>0&&alt<8000){
+ const rate=14*mThr;
+ while(smokeAccum>1/rate){
+ smokeAccum-=1/rate;
+ const rvp=ship.pos.clone().multiplyScalar(VSCALE);
+ engs.forEach(e=>{
+ if(e.throttle<.01) return;
+ const ew=new THREE.Vector3(e.lx||0,e.ly-.5,e.lz||0).applyQuaternion(ship.quat).add(rvp);
+ spawnSmoke(ew.x,ew.y,ew.z);
+ });
+ }
+ } else smokeAccum=0;
+
+ engs.forEach(e=>{const tv=document.getElementById('tv-'+e.id);if(tv)tv.innerText=(e.throttle*100).toFixed(0)+'%';});
+ // 引擎声
+ let maxTh=engs.reduce((s,e)=>Math.max(s,e.throttle),0);engSFX(maxTh);if(maxTh>0.01)startEngSFX();else stopEngSFX();
+}
+
+// ─── SOLAR ANIMATION (v6.0 原有) ───
+function updateSolarAnims(dt){
+ ship.getSolarPanels().forEach(p=>{
+ if(!p._pivot) return;
+ const target=p.deployed?1:0;
+ p.deployAngle=THREE.MathUtils.lerp(p.deployAngle,target,dt*2.5);
+ const side=p.lx>=0?1:-1;
+ p._pivot.rotation.z=(1-p.deployAngle)*side*(-Math.PI/2);
+ });
+}
+
+// ─── VISUAL UPDATE (v6.0 扩展) ───
+function updateVisuals(dt){
+ if(!ship.alive) return;
+ const vp=ship.pos.clone().multiplyScalar(VSCALE);
+ rocketGrp.position.copy(vp);
+ rocketGrp.quaternion.copy(ship.quat);
+ const alt=ship.getAlt();
+ padGroup.visible=alt<500;
+ if(alt<500){padGroup.position.copy(vp);padGroup.quaternion.copy(ship.quat);}
+ // 月球
+ moonAngle+=dt*0.0002;moonGroup.position.set(Math.cos(moonAngle)*MOON_ORBIT*VSCALE,0,Math.sin(moonAngle)*MOON_ORBIT*VSCALE);moonMesh.rotation.y+=dt*0.01;
+ // 机翼视觉同步
+ ship.getWings().forEach(w=>{if(w._vis)w._vis.material=w.extended?M.wing:M.wingExt});
+ // 轮子视觉同步
+ ship.getWheels().forEach(w=>{if(w._vis)w._vis.visible=w.deployed});
+ // 引擎火焰
+ engineGlows.forEach(({light,eng})=>{
+ const on=ship.getFuel().cur>0&&eng.throttle>0&&!eng.failed;
+ if(eng._fg) eng._fg.visible=on;
+ if(!on){light.intensity=0;return;}
+ const j=1+Math.random()*.2;
+ const{inner,mid,outer}=eng._fg.userData;
+ inner.scale.set(eng.throttle*j,eng.throttle*(2.1+Math.random()*.5),1);
+ mid.scale.set(eng.throttle*j,eng.throttle*(2.6+Math.random()*.7),1);
+ outer.scale.set(eng.throttle*j,eng.throttle*(3.1+Math.random()*.9),1);
+ if(eng.throttle>.65){inner.material.color.setHex(0xffffff);mid.material.color.setHex(0x60efff);outer.material.color.setHex(0x0088ee);}
+ else{inner.material.color.setHex(0xffcc44);mid.material.color.setHex(0xff6600);outer.material.color.setHex(0xcc1100);}
+ light.color.setHex(eng.throttle>.65?0x40c8ff:0xff6020);
+ light.intensity=eng.throttle*2.5*(.85+Math.random()*.3);
+ });
+ // FPV
+ if(camM=='fpv'){let pp=vp.clone().add(new THREE.Vector3(0,topY()+1,0).applyQuaternion(ship.quat));camera.position.copy(pp);camera.quaternion.copy(ship.quat)}
+ updateSolarAnims(dt);
+ earthMesh.rotation.y+=.00003;
+ cloudMesh.rotation.y+=.00005;
+ controls.target.copy(vp);
+}
+function topY(){const t=ship.getTanks();return t.length>0?Math.max(...t.map(tk=>tk.ly+1.05))+1:3}
+
+// ─── HUD (v6.0 扩展) ───
+function updateHUD(){
+ const alt=ship.getAlt();
+ const spd=ship.vel.length();
+ const r=ship.pos.length();
+ const gMag=(PHY.G*PHY.M)/(r*r);
+ const orbV=Math.sqrt(PHY.G*PHY.M/r);
+ const fuel=ship.getFuel();
+ const rho=1.225*Math.exp(-alt/8500);
+ const dynQ=.5*rho*spd*spd;
+ document.getElementById('u-alt').innerText=(alt/1000).toFixed(3);
+ document.getElementById('u-spd').innerText=spd.toFixed(1);
+ document.getElementById('u-orb').innerText=orbV.toFixed(1);
+ document.getElementById('u-g').innerText=gMag.toFixed(4);
+ document.getElementById('u-q').innerText=(dynQ/1000).toFixed(2);
+ document.getElementById('u-mass').innerText=ship.getMass().toFixed(0);
+ document.getElementById('u-fuel').innerText=fuel.cur.toFixed(1);
+ document.getElementById('u-fmax').innerText=fuel.max.toFixed(0);
+ document.getElementById('u-thr').innerText=(ship.getTotalThrust()/1000).toFixed(1);
+
+ const battery=ship.getBattery();
+ const batEl=document.getElementById('u-bat');
+ const fillEl=document.getElementById('energy-fill');
+ if(battery){
+ const pct=(battery.currentStorage/battery.maxStorage*100);
+ batEl.innerText=`${battery.currentStorage.toFixed(0)}/${battery.maxStorage}Wh`;
+ batEl.style.color=pct>20?'#22c55e':pct>5?'#fbbf24':'#ef4444';
+ fillEl.style.width=pct.toFixed(1)+'%';
+ fillEl.style.background=pct>20?'linear-gradient(90deg,#0ea5e9,#06b6d4)':pct>5?'linear-gradient(90deg,#d97706,#f59e0b)':'linear-gradient(90deg,#dc2626,#ef4444)';
+ } else {
+ batEl.innerText='--'; batEl.style.color='#64748b'; fillEl.style.width='0%';
+ }
+
+ const radar=ship.accessories.find(a=>a.type==='radar'&&a.connected);
+ const radarEl=document.getElementById('u-radar');
+ if(radar){
+ radarEl.innerText=radar.status.toUpperCase();
+ radarEl.style.color=radar.status==='warning'?'#ef4444':radar.status==='scanning'?'#22c55e':'#64748b';
+ } else {radarEl.innerText='--';radarEl.style.color='#64748b';}
+
+ const dmg=ship.damage;
+ const stEl=document.getElementById('u-status');
+ const dmgEl=document.getElementById('u-dmg');
+ if(!ship.alive){stEl.style.color='#ef4444';stEl.innerText='损毁';}
+ else if(dmg>70){stEl.style.color='#ef4444';stEl.innerText='严重损伤';dmgEl.innerText=`损伤: ${dmg.toFixed(0)}%`;}
+ else if(dmg>30){stEl.style.color='#fbbf24';stEl.innerText='轻度损伤';dmgEl.innerText=`损伤: ${dmg.toFixed(0)}%`;}
+ else{stEl.style.color='#22c55e';stEl.innerText='正常';dmgEl.innerText=dmg>0?`损伤: ${dmg.toFixed(0)}%`:'';}
+
+ // 任务列表
+ const lst=document.getElementById('mission-list');if(lst){lst.innerHTML='';MISSIONS.forEach((m,i)=>{let d=ship.missionCompleted.includes(i),it=document.createElement('div');it.innerHTML='<span style=color:'+(d?'#22c55e':'#64748b')+'>'+(d?'OK':m.name)+'</span>';lst.appendChild(it)})}
+ setGNCLabel();
+ updateAccessoryUI();
+
+ // 更新油箱UI
+ ship.getTanks().forEach(t=>{
+ const fi=document.querySelector(`[onchange="setCoord(${t.id},'lx',+this.value)"]`);
+ if(fi){const c=fi.closest('.part-card');if(c){const f=c.querySelector('.fuel-info');if(f)f.innerHTML=`燃料: <span style="color:#38bdf8">${t.currentFuel.toFixed(0)}</span>/${t.maxFuel} kg`;}}
+ });
+}
+
+// ─── RESET (v6.0 扩展) ───
+function resetAll(){
+ ship.parts=[];ship.accessories=[];_pid=1;
+ ship.pos.set(0,PHY.R+5,0);ship.vel.set(0,0,0);ship.quat.identity();
+ ship.alive=true;ship.destroyed=false;ship.damage=0;
+ ship.gncLevel=0;ship.autoPilot=false;ship.missionCompleted=[];
+ meteors.forEach(m=>{scene.remove(m.mesh);scene.remove(m.tail);});meteors.length=0;
+ expList.forEach(e=>{if(e.pts)scene.remove(e.pts);if(e.fl)scene.remove(e.fl);if(e.d)scene.remove(e.d);});expList.length=0;
+ accidents.length=0;accTimer=0;
+ interpreter.stop();interpreter.panelVisible=false;document.getElementById('block-panel').style.display='none';
+ rocketGrp.visible=true;
+ document.getElementById('alert-box').style.display='none';
+ document.getElementById('meteor-warn').style.display='none';
+ document.getElementById('accident-bar').innerText='';
+ document.getElementById('evade-text').style.display='none';
+ document.getElementById('fpv-ch').style.display='none';
+ document.getElementById('ai-box').style.display='none';
+ camM='orbit';document.getElementById('cam-st').innerText='轨道';document.getElementById('fpv-btn').style.opacity='.6';controls.enabled=true;
+ const t=new FuelTank();t.lx=0;t.ly=1.0;t.lz=0;
+ const e1=new Engine();e1.lx=-.55;e1.ly=-.4;e1.lz=0;
+ const e2=new Engine();e2.lx=.55;e2.ly=-.4;e2.lz=0;
+ ship.parts.push(t,e1,e2);
+ document.getElementById('gnc-lev').value=0;
+ document.getElementById('auto-btn').style.opacity='.4';document.getElementById('auto-st').innerText='需 L3';
+ syncVisual();setPad('tower');
+ camera.position.set(0,EARTH_VR+14,24);
+ controls.target.set(0,EARTH_VR+2,0);
+ setGNCLabel();gameState='design';document.getElementById('state-badge').innerText='设计';document.getElementById('state-badge').className='state-design';document.getElementById('gnc-lev').disabled=false;
+}
+
+// ─── SFX (需求22) ───
+let actx=null;try{actx=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}
+let sfxO=null,sfxG=null;
+function playTone(f,d,t,v){try{if(!actx)return;let o=actx.createOscillator();let g=actx.createGain();o.type=t||'sawtooth';o.frequency.value=f;g.gain.setValueAtTime(v||0.15,actx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,actx.currentTime+d);o.connect(g);g.connect(actx.destination);o.start();o.stop(actx.currentTime+d)}catch(e){}}
+function engSFX(th){try{if(!actx)return;if(th>.01&&actx.state!='running')actx.resume();if(sfxO&&sfxO.frequency)sfxO.frequency.value=60+th*120}catch(e){}}
+function startEngSFX(){try{if(!actx||sfxO)return;sfxO=actx.createOscillator();sfxG=actx.createGain();sfxO.type='sawtooth';sfxO.frequency.value=80;sfxG.gain.value=0;sfxO.connect(sfxG);sfxG.connect(actx.destination);sfxO.start()}catch(e){}}
+function stopEngSFX(){try{if(sfxO){sfxO.stop();sfxO.disconnect();sfxG.disconnect();sfxO=null;sfxG=null}}catch(e){}}
+
+// ─── MAIN LOOP (v6.0 扩展) ───
+const clock=new THREE.Clock();
+const PHYSICS_DT=0.01;
+
+function animate(){
+ requestAnimationFrame(animate);
+ const rawDt=Math.min(clock.getDelta(),.05);
+ const totalDt=rawDt*timeSpeed;
+ let accum=totalDt;
+ while(accum>=PHYSICS_DT){
+ updatePhysics(PHYSICS_DT);
+ interpreter.tick(PHYSICS_DT);
+ autoPilotUpdate(PHYSICS_DT);
+ updateEnergy(PHYSICS_DT);
+ accum-=PHYSICS_DT;
+ }
+ updateRadar(rawDt);
+ updateVisuals(rawDt);
+ updateSkyColor(ship.getAlt());
+ updateSmoke(rawDt);
+ updateMeteors(rawDt);
+ updateExplosions(rawDt);
+ checkAccidents(totalDt);
+ checkMissions();
+ updateAccidents(rawDt);
+ aiGNCUpdate(totalDt);
+ updateHUD();
+ controls.update();
+ renderer.render(scene,camera);
+}
+
+// ─── INIT ───
+resetAll();animate();
+
+window.addEventListener('resize',()=>{
+ camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();
+ renderer.setSize(innerWidth,innerHeight);
+});
+</script>
+</body>
+</html>
